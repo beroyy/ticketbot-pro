@@ -1,0 +1,70 @@
+{
+  "name": "ticketsbot-ai",
+  "version": "0.0.1",
+  "description": "Discord ticket bot with web dashboard",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean && rm -rf node_modules/.cache/turbo",
+    "db:generate": "dotenv -- pnpm --filter @ticketsbot/core db:generate",
+    "db:migrate": "dotenv -- pnpm --filter @ticketsbot/core db:migrate",
+    "db:migrate-dev": "dotenv -- pnpm --filter @ticketsbot/core db:migrate -- --name",
+    "db:push": "dotenv -- pnpm --filter @ticketsbot/core db:push",
+    "db:push:force": "dotenv -- pnpm --filter @ticketsbot/core db:push:force",
+    "db:seed": "tsx packages/scripts/src/db/seed.ts",
+    "db:studio": "dotenv -- pnpm --filter @ticketsbot/core db:studio",
+    "db:deploy": "dotenv -- pnpm --filter @ticketsbot/core db:deploy",
+    "db:reset": "dotenv -- pnpm --filter @ticketsbot/core db:reset",
+    "db:validate": "dotenv -- pnpm --filter @ticketsbot/core db:validate",
+    "deploy:validate:render": "tsx packages/scripts/src/deploy/validate-prod-env.ts render",
+    "deploy:validate:vercel": "tsx packages/scripts/src/deploy/validate-prod-env.ts vercel",
+    "dev": "tsx packages/scripts/src/dev/start-dev.ts",
+    "docker": "docker compose up --build",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint -- --fix",
+    "start": "turbo run start",
+    "start:production": "tsx packages/scripts/src/deploy/start-production.ts",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck"
+  },
+  "dependencies": {
+    "zod": "^4.0.5"
+  },
+  "overrides": {
+    "zod": "^4.0.5",
+    "@sapphire/framework": "^5.3.6",
+    "discord.js": "^14.21.0",
+    "prisma": "^6.12.0",
+    "@prisma/client": "^6.12.0",
+    "@prisma/adapter-neon": "^6.12.0"
+  },
+  "devDependencies": {
+    "@orangeopensource/hurl": "^6.1.1",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/node": "^24.0.14",
+    "@vitest/ui": "^3.2.4",
+    "concurrently": "^9.2.0",
+    "dotenv-cli": "^9.0.0",
+    "eslint": "^9.31.0",
+    "neonctl": "^2.12.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "tsx": "^4.20.3",
+    "turbo": "^2.5.5",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.4",
+    "vitest": "^3.2.4"
+  }
+}

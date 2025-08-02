@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "pnpm turbo build --filter=@ticketsbot/web",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "outputDirectory": ".next"
+}

@@ -1,0 +1,83 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'turbo.json'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'turbo.json'
+      - '.github/workflows/**'
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+jobs:
+  code-quality:
+    name: Type Check & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get pnpm version
+        id: pnpm-version
+        run: |
+          PNPM_VERSION=$(grep '"packageManager"' package.json | sed -E 's/.*"pnpm@([^"]+)".*/\1/')
+          echo "version=${PNPM_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ steps.pnpm-version.outputs.version }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create minimal CI environment
+        run: |
+          # Create minimal .env for CI type checking
+          cat > .env << 'EOF'
+          NODE_ENV=test
+          DATABASE_URL=postgresql://test:test@localhost:5432/test
+          BETTER_AUTH_SECRET=test-secret-at-least-32-characters-long-for-ci
+          DISCORD_TOKEN=test-token
+          DISCORD_CLIENT_ID=123456789012345678
+          DISCORD_CLIENT_SECRET=test-secret-at-least-32-characters
+          EOF
+
+      - name: Generate Prisma Client
+        run: pnpm --filter @ticketsbot/core db:generate
+
+      - name: Run type checking
+        run: pnpm turbo run typecheck --cache-dir=.turbo
+
+      - name: Run linting
+        run: pnpm turbo run lint --cache-dir=.turbo
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Code Quality Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ All checks passed!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Some checks failed. Please review the logs above." >> $GITHUB_STEP_SUMMARY
+          fi
