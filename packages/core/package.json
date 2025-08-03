@@ -21,18 +21,18 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
-    "@prisma/adapter-neon": "^6.12.0",
-    "@prisma/client": "^6.12.0",
+    "@prisma/adapter-neon": "^6.13.0",
+    "@prisma/client": "^6.13.0",
     "@sapphire/bitfield": "^1.2.4",
-    "better-auth": "^1.3.2",
+    "better-auth": "^1.3.4",
     "better-call": "^1.0.12",
-    "bullmq": "^5.56.5",
+    "bullmq": "^5.56.9",
     "discord.js": "^14.21.0",
-    "hono": "^4.8.5",
-    "posthog-node": "^5.5.1",
-    "redis": "^5.6.0",
+    "hono": "^4.8.12",
+    "posthog-node": "^5.6.0",
+    "redis": "^5.7.0",
     "ws": "^8.18.3",
-    "zod": "^4.0.5"
+    "zod": "^4.0.14"
   },
   "peerDependencies": {
     "posthog-js": "^1.189.0"
@@ -48,11 +48,11 @@
     "@ticketsbot/vitest-config": "workspace:*",
     "@types/ws": "^8.18.1",
     "bufferutil": "^4.0.9",
-    "dotenv": "^17.2.0",
-    "eslint": "^9.31.0",
-    "prisma": "^6.12.0",
+    "dotenv": "^17.2.1",
+    "eslint": "^9.32.0",
+    "prisma": "^6.13.0",
     "tsx": "^4.20.3",
-    "typescript": "^5.8.3"
+    "typescript": "5.8.3"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -70,8 +70,5 @@
     "./analytics/api": "./src/analytics/api/index.ts",
     "./analytics/bot": "./src/analytics/bot/index.ts",
     "./analytics/web": "./src/analytics/web/index.ts"
-  },
-  "prisma": {
-    "schema": "./prisma/"
   }
 }

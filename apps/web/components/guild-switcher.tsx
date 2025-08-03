@@ -9,19 +9,19 @@ import { Badge } from "@/components/ui/badge";
 import { Check, ChevronsUpDown, Bot, Plus, Loader2, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-interface Guild {
+type Guild = {
   id: string;
   name: string;
   icon?: string | null;
   owner?: boolean;
   permissions?: string;
   botInstalled?: boolean;
-}
+};
 
-interface GuildSwitcherProps {
+type GuildSwitcherProps = {
   currentGuildId: string;
   guilds: Guild[];
-}
+};
 
 export function GuildSwitcher({ currentGuildId, guilds }: GuildSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,19 +49,16 @@ export function GuildSwitcher({ currentGuildId, guilds }: GuildSwitcherProps) {
     }
   };
 
-  // Build icon URL if icon hash exists
   const getIconUrl = (guild: Guild) => {
     if (!guild.icon) return null;
     return `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`;
   };
 
-  // Filter guilds based on search query
   const filteredGuilds = useMemo(() => {
     if (!searchQuery) return guilds;
     return guilds.filter((g) => g.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [guilds, searchQuery]);
 
-  // Separate guilds by bot installation and ownership
   const guildsWithBot = filteredGuilds.filter((g) => g.botInstalled);
   const guildsWithoutBot = filteredGuilds.filter((g) => !g.botInstalled);
 
@@ -106,7 +103,6 @@ export function GuildSwitcher({ currentGuildId, guilds }: GuildSwitcherProps) {
         className="w-80 rounded-xl border border-gray-200 bg-white p-3 shadow-lg"
         sideOffset={8}
       >
-        {/* Search Input */}
         {guilds.length > 5 && (
           <div className="relative mb-3">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -119,7 +115,6 @@ export function GuildSwitcher({ currentGuildId, guilds }: GuildSwitcherProps) {
             />
           </div>
         )}
-
         <div className="space-y-4">
           {ownedGuildsWithBot.length > 0 && (
             <div>
@@ -137,7 +132,6 @@ export function GuildSwitcher({ currentGuildId, guilds }: GuildSwitcherProps) {
               </div>
             </div>
           )}
-
           {otherGuildsWithBot.length > 0 && (
             <div>
               <h3 className="mb-2 px-2 text-xs font-medium text-gray-500">Other Servers</h3>
@@ -154,7 +148,6 @@ export function GuildSwitcher({ currentGuildId, guilds }: GuildSwitcherProps) {
               </div>
             </div>
           )}
-
           {guildsWithoutBot.length > 0 && (
             <div>
               <h3 className="mb-2 px-2 text-xs font-medium text-gray-500">Install Bot</h3>
@@ -171,11 +164,9 @@ export function GuildSwitcher({ currentGuildId, guilds }: GuildSwitcherProps) {
               </div>
             </div>
           )}
-
           {guilds.length === 0 && (
             <p className="px-2 py-4 text-center text-sm text-gray-500">No servers found</p>
           )}
-
           {guilds.length > 0 && filteredGuilds.length === 0 && (
             <p className="px-2 py-4 text-center text-sm text-gray-500">
               No servers match "{searchQuery}"
@@ -187,25 +178,18 @@ export function GuildSwitcher({ currentGuildId, guilds }: GuildSwitcherProps) {
   );
 }
 
-interface GuildItemProps {
+type GuildItemProps = {
   guild: Guild;
   isSelected: boolean;
   onSelect: (id: string) => void;
   iconUrl: string | null;
-}
+};
 
 function GuildItem({ guild, isSelected, onSelect, iconUrl }: GuildItemProps) {
   const handleInstallBot = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || "1397414095753318522";
-    // const inviteUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=1099780064336&scope=bot+applications.commands&guild_id=${guild.id}`;
-
-    // const inviteUrl = `https://discord.com/oauth2/authorize?client_id=${
-    //   process.env.NODE_ENV === "production" ? "1397412199869186090" : "1397414095753318522"
-    // }`;
-
-    const inviteUrl = "https://discord.com/oauth2/authorize?client_id=1397414095753318522";
-
+    const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || "1397414095753318522";
+    const inviteUrl = `https://discord.com/oauth2/authorize?client_id=${clientId}`;
     window.open(inviteUrl, "_blank");
   };
 

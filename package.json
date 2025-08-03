@@ -43,6 +43,7 @@
     "zod": "^4.0.14"
   },
   "overrides": {
+    "typescript": "^5.8.3",
     "zod": "^4.0.5",
     "@sapphire/framework": "^5.3.6",
     "discord.js": "^14.21.0",
