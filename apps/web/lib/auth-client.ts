@@ -14,6 +14,10 @@ const getApiUrl = () => {
 export const authClient = createAuthClient({
   baseURL: getApiUrl(),
   basePath: "/auth",
+  fetch: {
+    credentials: "include",
+    mode: "cors" as RequestMode,
+  },
 });
 
 export const useSession = authClient.useSession;
