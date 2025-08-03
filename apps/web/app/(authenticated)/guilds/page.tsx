@@ -2,14 +2,20 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import { getServerSession, getUserWithGuilds } from "@/lib/auth-server";
 import { checkBotInstalled, setSelectedGuild, getSelectedGuild } from "@/lib/guild-context";
+import { GuildUpdatesListener } from "@/components/guild-updates-listener";
+
+export const dynamic = 'force-dynamic';
 
 export default async function GuildsPage({
   searchParams,
 }: {
-  searchParams: { error?: string };
+  searchParams: Promise<{ error?: string }>;
 }) {
   const session = await getServerSession();
   if (!session) redirect("/login");
+  
+  // Await searchParams
+  const params = await searchParams;
   
   // Get user with guilds
   const userData = await getUserWithGuilds(session.user.id);
@@ -29,7 +35,7 @@ export default async function GuildsPage({
   const selectedGuild = await getSelectedGuild();
   
   // If user has a selected guild with bot installed, redirect there
-  if (selectedGuild && !searchParams.error) {
+  if (selectedGuild && !params.error) {
     const guild = guildsWithStatus.find((g: any) => g.id === selectedGuild && g.botInstalled);
     if (guild) {
       redirect(`/g/${selectedGuild}/dashboard`);
@@ -41,60 +47,65 @@ export default async function GuildsPage({
   const guildsWithoutBot = guildsWithStatus.filter((g: any) => !g.botInstalled);
   
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto max-w-4xl px-4">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold">Select a Server</h1>
-          <p className="mt-2 text-gray-600">
-            Choose a server to manage with TicketsBot
-          </p>
-        </div>
-        
-        {searchParams.error === "no-access" && (
-          <div className="mb-6 rounded-lg bg-red-50 p-4 text-red-800">
-            You don't have access to that server. Please select a different one.
-          </div>
-        )}
-        
-        {guildsWithBot.length > 0 && (
-          <div className="mb-8">
-            <h2 className="mb-4 text-lg font-semibold">Servers with TicketsBot</h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              {guildsWithBot.map((guild: any) => (
-                <GuildCard
-                  key={guild.id}
-                  guild={guild}
-                  hasBot={true}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {guildsWithoutBot.length > 0 && (
-          <div>
-            <h2 className="mb-4 text-lg font-semibold">Available Servers</h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              {guildsWithoutBot.map((guild: any) => (
-                <GuildCard
-                  key={guild.id}
-                  guild={guild}
-                  hasBot={false}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {guildsWithStatus.length === 0 && (
-          <div className="text-center">
-            <p className="text-gray-600">
-              You don't have any Discord servers. Create one first!
+    <>
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="container mx-auto max-w-4xl px-4">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold">Select a Server</h1>
+            <p className="mt-2 text-gray-600">
+              Choose a server to manage with TicketsBot
             </p>
           </div>
-        )}
+          
+          {params.error === "no-access" && (
+            <div className="mb-6 rounded-lg bg-red-50 p-4 text-red-800">
+              You don't have access to that server. Please select a different one.
+            </div>
+          )}
+          
+          {guildsWithBot.length > 0 && (
+            <div className="mb-8">
+              <h2 className="mb-4 text-lg font-semibold">Servers with TicketsBot</h2>
+              <div className="grid gap-4 md:grid-cols-2">
+                {guildsWithBot.map((guild: any) => (
+                  <GuildCard
+                    key={guild.id}
+                    guild={guild}
+                    hasBot={true}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {guildsWithoutBot.length > 0 && (
+            <div>
+              <h2 className="mb-4 text-lg font-semibold">Available Servers</h2>
+              <div className="grid gap-4 md:grid-cols-2">
+                {guildsWithoutBot.map((guild: any) => (
+                  <GuildCard
+                    key={guild.id}
+                    guild={guild}
+                    hasBot={false}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {guildsWithStatus.length === 0 && (
+            <div className="text-center">
+              <p className="text-gray-600">
+                You don't have any Discord servers. Create one first!
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+      
+      {/* SSE listener for real-time guild updates */}
+      <GuildUpdatesListener />
+    </>
   );
 }
 

@@ -194,4 +194,21 @@ export namespace User {
       },
     });
   };
+
+  /**
+   * Find Better Auth user by Discord ID
+   */
+  export const findBetterAuthUserByDiscordId = async (
+    discordId: string
+  ): Promise<{ id: string; email: string } | null> => {
+    const user = await prisma.user.findFirst({
+      where: { discordUserId: discordId },
+      select: {
+        id: true,
+        email: true,
+      },
+    });
+    
+    return user;
+  };
 }

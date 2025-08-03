@@ -1,6 +1,9 @@
 import type { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 import { validateWebhookRequest, webhookResponse, type GuildJoinedData } from "@/lib/webhooks";
 import { ensure as ensureGuild, update as updateGuild } from "@ticketsbot/core/domains/guild";
+import { User } from "@ticketsbot/core/domains";
+import { guildEvents } from "@/lib/sse/guild-events";
 
 /**
  * POST /api/webhooks/bot/guild-joined
@@ -41,6 +44,28 @@ export async function POST(request: NextRequest) {
     });
 
     console.log(`Bot joined guild: ${data.guildName} (${data.guildId})`);
+
+    // Revalidate the guilds page to show updated bot installation status
+    revalidatePath('/guilds');
+    
+    // Broadcast SSE event to the guild owner if they're a web user
+    if (data.ownerId) {
+      try {
+        // Find the Better Auth user by Discord ID
+        const betterAuthUser = await User.findBetterAuthUserByDiscordId(data.ownerId);
+        
+        if (betterAuthUser) {
+          // Notify via SSE
+          guildEvents.notifyGuildJoined(betterAuthUser.id, data.guildId, data.guildName);
+          console.log(`Sent SSE notification to user ${betterAuthUser.email} for guild ${data.guildName}`);
+        } else {
+          console.log(`No Better Auth user found for Discord ID ${data.ownerId}`);
+        }
+      } catch (error) {
+        // Don't fail the webhook if SSE notification fails
+        console.error("Failed to send SSE notification:", error);
+      }
+    }
 
     return webhookResponse(true, "Guild joined successfully");
   } catch (error) {

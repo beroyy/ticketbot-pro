@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth-server";
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Authenticated Layout
  * Requires valid session - redirects to login if not authenticated
