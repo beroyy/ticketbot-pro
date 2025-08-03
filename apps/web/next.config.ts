@@ -4,6 +4,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@ticketsbot/core/auth", "@ticketsbot/core"],
   productionBrowserSourceMaps: false,
+  serverExternalPackages: ["@prisma/client"],
   images: {
     remotePatterns: [
       {

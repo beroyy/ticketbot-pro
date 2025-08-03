@@ -40,7 +40,7 @@
     "typecheck": "turbo run typecheck"
   },
   "dependencies": {
-    "zod": "^4.0.5"
+    "zod": "^4.0.14"
   },
   "overrides": {
     "zod": "^4.0.5",
@@ -51,20 +51,20 @@
     "@prisma/adapter-neon": "^6.12.0"
   },
   "devDependencies": {
-    "@orangeopensource/hurl": "^6.1.1",
+    "@orangeopensource/hurl": "^6.1.4",
     "@tailwindcss/postcss": "^4.1.11",
-    "@types/node": "^24.0.14",
+    "@types/node": "^24.1.0",
     "@vitest/ui": "^3.2.4",
     "concurrently": "^9.2.0",
     "dotenv-cli": "^9.0.0",
-    "eslint": "^9.31.0",
-    "neonctl": "^2.12.0",
+    "eslint": "^9.32.0",
+    "neonctl": "^2.14.0",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tsx": "^4.20.3",
     "turbo": "^2.5.5",
     "typescript": "5.8.3",
-    "vite": "^7.0.4",
+    "vite": "^7.0.6",
     "vitest": "^3.2.4"
   }
 }
