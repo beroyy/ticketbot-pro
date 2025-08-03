@@ -42,16 +42,11 @@ export function getApiUrl(): string {
 //   return "localhost";
 // }
 
-export function getDiscordRedirectUri(): string {
-  return `${getWebUrl()}/api/auth/callback/discord`;
-}
-
 export function getAllUrls() {
   return {
     baseDomain: getBaseDomain(),
     webUrl: getWebUrl(),
     apiUrl: getApiUrl(),
-    discordRedirectUri: getDiscordRedirectUri(),
   };
 }
 

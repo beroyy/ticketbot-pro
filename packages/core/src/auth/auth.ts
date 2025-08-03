@@ -95,7 +95,6 @@ const createAuthInstance = () => {
     baseURL: webOrigin,
     basePath: "/api/auth",
     discordConfigured: !!discordClientId && !!discordClientSecret,
-    redirectURI: `${webOrigin}/api/auth/callback/discord`,
     discordClientId: discordClientId?.substring(0, 6) + "...",
     nodeEnv: process.env["NODE_ENV"],
     cookieDomain,
@@ -130,7 +129,7 @@ const createAuthInstance = () => {
       discord: {
         clientId: discordClientId,
         clientSecret: discordClientSecret,
-        scope: ["identify", "guilds"],
+        scope: ["guilds"],
         mapProfileToUser: (profile: any) => {
           logger.debug("Discord OAuth profile received:", {
             id: profile.id,

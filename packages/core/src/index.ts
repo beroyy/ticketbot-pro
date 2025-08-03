@@ -215,7 +215,6 @@ export {
   validateEnvironmentVariables,
   getWebUrl,
   getApiUrl,
-  getDiscordRedirectUri,
   getAllUrls,
   getDevPorts,
   isProduction,
