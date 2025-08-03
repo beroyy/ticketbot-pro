@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/providers/query-provider";
 import { SSEProvider } from "@/components/providers/sse-provider";
+import { DialogProvider } from "@/components/providers/dialog-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -30,7 +31,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <SSEProvider>
           <QueryProvider>
-            {children}
+            <DialogProvider>
+              {children}
+            </DialogProvider>
           </QueryProvider>
         </SSEProvider>
         <Toaster />

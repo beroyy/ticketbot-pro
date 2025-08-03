@@ -3,6 +3,7 @@ import { immer } from "zustand/middleware/immer";
 import { subscribeWithSelector } from "zustand/middleware";
 import { devtools } from "zustand/middleware";
 import { toast } from "sonner";
+import { dialog } from "@/lib/dialog";
 
 export type SSEEventType =
   | { type: "guild-joined"; guildId: string; guildName: string; timestamp: number }
@@ -194,15 +195,29 @@ export const useSSEEventStore = create<SSEEventStore>()(
 );
 
 // Side effects handler - kept outside store to avoid re-renders
-function handleEventSideEffects(event: SSEEventType) {
+async function handleEventSideEffects(event: SSEEventType) {
   switch (event.type) {
-    case "guild-joined":
+    case "guild-joined": {
+      // Show a toast first
       toast.success(`Bot installed in ${event.guildName}!`, {
         description: "The server list has been updated.",
         duration: 5000,
         id: `guild-joined-${event.guildId}`, // Prevent duplicate toasts
       });
+      
+      // Then show a confirmation dialog
+      const confirmed = await dialog.confirm({
+        title: "Bot Successfully Installed!",
+        description: `${event.guildName} has been added to your servers. Would you like to configure it now?`,
+        confirmText: "Configure Now",
+        cancelText: "Later",
+      });
+      
+      if (confirmed) {
+        window.location.href = `/g/${event.guildId}/settings`;
+      }
       break;
+    }
 
     case "guild-left":
       toast.info(`Bot removed from ${event.guildName}`, {
