@@ -138,3 +138,7 @@ screenshots/
 
 # Generated files
 ticketsbot_*_*.txt
+
+# References
+**/example/
+**/legacy/
