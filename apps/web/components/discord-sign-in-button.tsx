@@ -13,6 +13,7 @@ export function DiscordSignInButton() {
       // Call our server endpoint to generate OAuth URL
       const response = await fetch("/api/auth/discord/signin", {
         method: "POST",
+        credentials: "same-origin", // Ensure cookies are included
         headers: {
           "Content-Type": "application/json",
         },

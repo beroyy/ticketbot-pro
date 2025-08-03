@@ -11,9 +11,14 @@ export async function POST(request: NextRequest) {
     const result = await auth.api.signInSocial({
       body: {
         provider: "discord",
-        callbackURL,
       },
       headers: request.headers,
+    });
+
+    console.log("OAuth result from Better Auth:", {
+      hasUrl: !!result?.url,
+      url: result?.url,
+      fullResult: result,
     });
 
     if (!result?.url) {
