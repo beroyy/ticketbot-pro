@@ -25,21 +25,6 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  webpack: (config: any, { isServer }: { isServer: boolean }) => {
-    if (!isServer) {
-      config.ignoreWarnings = [
-        {
-          module: /installHook\.js/,
-        },
-        {
-          module: /react_devtools_backend/,
-        },
-
-        /Failed to parse source map/,
-      ];
-    }
-    return config;
-  },
 };
 
 export default nextConfig;
