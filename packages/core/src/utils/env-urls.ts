@@ -14,7 +14,7 @@ export function getWebUrl(): string {
   const isProduction = process.env.NODE_ENV === "production";
 
   if (isProduction) {
-    return `https://app.${baseDomain}`;
+    return `https://${baseDomain}`;
   }
 
   return `http://localhost:${DEV_PORTS.web}`;
