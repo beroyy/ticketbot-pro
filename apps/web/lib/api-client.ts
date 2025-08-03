@@ -3,11 +3,13 @@ import type { AppType } from "@ticketsbot/api";
 
 export const createApiClient = () => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-  return hc<AppType>(baseUrl, { 
-    fetch: (input: RequestInfo | URL, init?: RequestInit) => fetch(input, { 
-      ...init, 
-      credentials: 'include' 
-    })
+  return hc<AppType>(baseUrl, {
+    fetch: (input: RequestInfo | URL, init?: RequestInit) =>
+      fetch(input, {
+        ...init,
+        credentials: "include",
+        mode: "cors" as RequestMode,
+      }),
   });
 };
 
