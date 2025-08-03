@@ -3,7 +3,7 @@ import { immer } from "zustand/middleware/immer";
 import { subscribeWithSelector } from "zustand/middleware";
 import { devtools } from "zustand/middleware";
 import { toast } from "sonner";
-import { dialog } from "@/lib/dialog";
+// import { dialog } from "@/lib/dialog";
 
 export type SSEEventType =
   | { type: "guild-joined"; guildId: string; guildName: string; timestamp: number }
@@ -204,18 +204,17 @@ async function handleEventSideEffects(event: SSEEventType) {
         duration: 5000,
         id: `guild-joined-${event.guildId}`, // Prevent duplicate toasts
       });
-      
-      // Then show a confirmation dialog
-      const confirmed = await dialog.confirm({
-        title: "Bot Successfully Installed!",
-        description: `${event.guildName} has been added to your servers. Would you like to configure it now?`,
-        confirmText: "Configure Now",
-        cancelText: "Later",
-      });
-      
-      if (confirmed) {
-        window.location.href = `/g/${event.guildId}/settings`;
-      }
+
+      // const confirmed = await dialog.confirm({
+      //   title: "Bot Successfully Installed!",
+      //   description: `${event.guildName} has been added to your servers. Would you like to configure it now?`,
+      //   confirmText: "Configure Now",
+      //   cancelText: "Later",
+      // });
+
+      // if (confirmed) {
+      //   window.location.href = `/g/${event.guildId}/settings`;
+      // }
       break;
     }
 

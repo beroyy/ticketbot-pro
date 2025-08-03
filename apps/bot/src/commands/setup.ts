@@ -373,7 +373,6 @@ Do you want to proceed?`
       }
     }
 
-    // Send webhook notification
     const webhookClient = getWebhookClient();
     if (webhookClient) {
       await webhookClient.sendSetupComplete({
