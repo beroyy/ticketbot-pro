@@ -41,6 +41,8 @@ export const createAuthenticatedClient = (cookieHeader: string) => {
 
     return fetch(input, {
       ...init,
+      credentials: "include",
+      mode: "cors" as RequestMode,
       headers,
     });
   };

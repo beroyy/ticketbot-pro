@@ -14,7 +14,6 @@ const getApiUrl = () => {
 export const authClient = createAuthClient({
   baseURL: getApiUrl(),
   basePath: "/auth",
-  redirect: true,
 });
 
 export const useSession = authClient.useSession;

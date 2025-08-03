@@ -124,13 +124,13 @@ const createAuthInstance = () => {
         enabled: true,
         domain: cookieDomain,
       },
-      disableCSRFCheck: process.env["NODE_ENV"] === "development",
+      disableCSRFCheck: !isProduction(),
       cookies: {
         session_token: {
           name: "session_token",
           attributes: {
             sameSite: "lax",
-            secure: process.env["NODE_ENV"] === "production",
+            secure: isProduction(),
             httpOnly: true,
             domain: cookieDomain,
             path: "/",
