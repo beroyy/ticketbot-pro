@@ -5,7 +5,7 @@ import { FaDiscord } from "react-icons/fa6";
 
 export function DiscordSignInButton() {
   const handleSignIn = async () => {
-    const redirectUri = `https://discord.com/oauth2/authorize?client_id=1397412199869186090&response_type=code&redirect_uri=https%3A%2F%2Fticketbot.pro%2Fapi%2Fapi%2Fauth%2Fcallback%2Fdiscord&scope=identify+email+guilds`;
+    const redirectUri = `https://discord.com/oauth2/authorize?client_id=1397412199869186090&response_type=code&redirect_uri=https%3A%2F%2Fticketbot.pro%2Fapi%2Fauth%2Fcallback%2Fdiscord&scope=identify+email+guilds`;
     window.location.href = redirectUri;
   };
   // : "http://localhost:3000/api/auth/callback/discord"
