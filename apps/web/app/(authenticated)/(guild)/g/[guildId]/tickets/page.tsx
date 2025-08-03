@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { createAuthenticatedClient } from "@/lib/api-client";
 import { TicketsDashboard } from "@/features/tickets/tickets-dashboard";
 import { getServerSession } from "@/lib/auth-server";
+import RequirePermission from "@/components/guards/RequirePermission";
 
 interface TicketsPageProps {
   params: {
@@ -16,6 +17,21 @@ interface TicketsPageProps {
 }
 
 export default async function TicketsPage({ params, searchParams }: TicketsPageProps) {
+  // Use guild ID from URL params
+  const guildId = params.guildId;
+  
+  return (
+    <RequirePermission 
+      permission="TICKET_VIEW_ALL" 
+      guildId={guildId}
+      errorMessage="You don't have permission to view all tickets"
+    >
+      <TicketsPageContent params={params} searchParams={searchParams} />
+    </RequirePermission>
+  );
+}
+
+async function TicketsPageContent({ params, searchParams }: TicketsPageProps) {
   // Get cookies for authentication
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();

@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth-server";
-import { validateGuildAccess } from "@/lib/guild-context";
+import { validateGuildAccess, getGuildWithAccess } from "@/lib/guild-context";
 
 /**
  * Guild Layout
  * Validates guild access and provides context to child pages
+ * Fetches user permissions for the guild
  */
 export default async function GuildLayout({
   children,
@@ -32,7 +33,16 @@ export default async function GuildLayout({
     redirect("/guilds?error=no-access");
   }
   
+  // Get guild details
+  const guild = await getGuildWithAccess(session.user.discordUserId!, params.guildId);
+  
+  if (!guild) {
+    // This shouldn't happen if validateGuildAccess passed, but handle it
+    redirect("/guilds?error=guild-not-found");
+  }
+  
   // User has access, render children with guild context
+  // Each page/component will fetch permissions as needed for server-side checks
   return (
     <div className="min-h-screen bg-gray-50">
       {/* TODO: Add navigation header with guild switcher */}
