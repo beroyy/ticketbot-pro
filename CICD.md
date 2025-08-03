@@ -78,7 +78,6 @@ NODE_ENV                   # test/development/production (default: test)
 
 # Optional Base Configuration
 BASE_DOMAIN                # Your domain (e.g., ticketsbot.dev) - required for production
-PORT_OFFSET                # Base port for services (default: 3000)
 
 # Feature Flags (all optional, default: 'false')
 NEXT_PUBLIC_FEATURE_NEW_TICKET_UI    # Enable new ticket UI
@@ -99,15 +98,10 @@ TURBO_TEAM                 # Team name for Turbo cache
 The following values are automatically calculated and don't need to be set:
 
 ```yaml
-# URLs (derived from NODE_ENV and BASE_DOMAIN/PORT_OFFSET)
-WEB_URL                    # http://localhost:3000 or https://{BASE_DOMAIN}
-API_URL                    # http://localhost:3001 or https://{BASE_DOMAIN}
+# URLs (derived from NODE_ENV and BASE_DOMAIN)
+WEB_URL                    # http://localhost:{WEB_PORT} or https://{BASE_DOMAIN}
+API_URL                    # http://localhost:{API_PORT} or https://{BASE_DOMAIN}
 NEXT_PUBLIC_API_URL        # Always matches API_URL
-
-# Ports (derived from PORT_OFFSET)
-WEB_PORT                   # PORT_OFFSET (default: 3000)
-API_PORT                   # PORT_OFFSET + 1 (default: 3001)
-BOT_PORT                   # PORT_OFFSET + 2 (default: 3002)
 
 # Smart Defaults (based on NODE_ENV)
 LOG_LEVEL                  # debug in dev, warn in prod

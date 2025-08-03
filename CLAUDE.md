@@ -216,7 +216,6 @@ DISCORD_CLIENT_SECRET=your-discord-secret
 
 ```env
 # Base configuration
-PORT_OFFSET=3000              # Base port (default: 3000)
 BASE_DOMAIN=ticketsbot.dev    # Required for production
 REDIS_URL=redis://localhost:6379
 
@@ -231,7 +230,6 @@ NEXT_PUBLIC_FEATURE_ADVANCED_FORMS=false
 The system automatically derives these values:
 
 - `WEB_URL`, `API_URL` - Based on NODE_ENV and BASE_DOMAIN
-- `WEB_PORT`, `API_PORT`, `BOT_PORT` - Based on PORT_OFFSET
 - `LOG_LEVEL`, `LOG_REQUESTS` - Based on NODE_ENV
 - And many more...
 
@@ -657,6 +655,7 @@ app.get("/tickets", validateRequest(ticketSchemas.list), async (c) => {
   - Maintains zero-downtime deployment capability
 
 See implementation details:
+
 - [Turborepo Docker Guide](https://turbo.build/repo/docs/guides/tools/docker)
 - [Render Monorepo Support](https://render.com/docs/monorepo-support)
 
