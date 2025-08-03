@@ -9,6 +9,10 @@ export const createApiClient = () => {
         ...init,
         credentials: "include",
         mode: "cors" as RequestMode,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
       }),
   });
 };
@@ -21,6 +25,8 @@ export const createAuthenticatedClient = (cookieHeader: string) => {
   const customFetch: typeof fetch = (input, init) => {
     const headers = new Headers(init?.headers);
     headers.set("Cookie", cookieHeader);
+    headers.set("Content-Type", "application/json");
+    headers.set("Accept", "application/json");
 
     return fetch(input, {
       ...init,
