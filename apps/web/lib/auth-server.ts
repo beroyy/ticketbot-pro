@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSession, type AuthSession } from "@ticketsbot/core/auth";
 import { User } from "@ticketsbot/core/domains";
 import { findById as findGuildById } from "@ticketsbot/core/domains/guild";
+import { getWebUrl } from "@ticketsbot/core";
 
 /**
  * Server-side auth utilities for App Router
@@ -17,17 +18,17 @@ export async function getServerSession(): Promise<AuthSession | null> {
   try {
     // Get cookies from Next.js
     const cookieStore = await cookies();
-    
+
     // Create a Request object with cookies for better-auth
-    const request = new Request("http://localhost", {
+    const request = new Request(getWebUrl(), {
       headers: {
         cookie: cookieStore.toString(),
       },
     });
-    
+
     // Use better-auth's session validation
     const session = await getSession(request);
-    
+
     return session;
   } catch (error) {
     console.error("Failed to get server session:", error);
@@ -41,11 +42,11 @@ export async function getServerSession(): Promise<AuthSession | null> {
  */
 export async function requireAuth(): Promise<AuthSession> {
   const session = await getServerSession();
-  
+
   if (!session) {
     throw new Error("Unauthorized");
   }
-  
+
   return session;
 }
 
@@ -53,15 +54,13 @@ export async function requireAuth(): Promise<AuthSession> {
  * Require authentication or redirect
  * Useful in pages/layouts that need auth
  */
-export async function requireAuthOrRedirect(
-  redirectTo: string = "/login"
-): Promise<AuthSession> {
+export async function requireAuthOrRedirect(redirectTo: string = "/login"): Promise<AuthSession> {
   const session = await getServerSession();
-  
+
   if (!session) {
     redirect(redirectTo);
   }
-  
+
   return session;
 }
 
@@ -76,17 +75,17 @@ export async function getUserWithGuilds(userId: string) {
     if (!user?.discordUserId) {
       return null;
     }
-    
+
     // Get Discord user with cached guilds
     const discordUser = await User.getDiscordUser(user.discordUserId);
     if (!discordUser) {
       return null;
     }
-    
+
     // Parse guilds from JSON field
     const guildsData = discordUser.guilds as { data?: any[] } | null;
     const discordGuilds = guildsData?.data || [];
-    
+
     // Check bot installation status for each guild
     const guildsWithBotStatus = await Promise.all(
       discordGuilds.map(async (guild) => {
@@ -97,7 +96,7 @@ export async function getUserWithGuilds(userId: string) {
         };
       })
     );
-    
+
     return {
       ...user,
       discordUser,
