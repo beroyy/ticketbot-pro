@@ -58,25 +58,24 @@ export function GuildSwitcher({ currentGuildId, guilds }: GuildSwitcherProps) {
   // Filter guilds based on search query
   const filteredGuilds = useMemo(() => {
     if (!searchQuery) return guilds;
-    return guilds.filter((g) => 
-      g.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    return guilds.filter((g) => g.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [guilds, searchQuery]);
 
   // Separate guilds by bot installation and ownership
   const guildsWithBot = filteredGuilds.filter((g) => g.botInstalled);
   const guildsWithoutBot = filteredGuilds.filter((g) => !g.botInstalled);
-  
+
   const ownedGuildsWithBot = guildsWithBot.filter((g) => g.owner);
   const otherGuildsWithBot = guildsWithBot.filter((g) => !g.owner);
 
   return (
-    <Popover 
-      open={isOpen} 
+    <Popover
+      open={isOpen}
       onOpenChange={(open) => {
         setIsOpen(open);
         if (!open) setSearchQuery("");
-      }}>
+      }}
+    >
       <PopoverTrigger asChild>
         <button
           className={cn(
@@ -120,7 +119,7 @@ export function GuildSwitcher({ currentGuildId, guilds }: GuildSwitcherProps) {
             />
           </div>
         )}
-        
+
         <div className="space-y-4">
           {ownedGuildsWithBot.length > 0 && (
             <div>
@@ -174,11 +173,9 @@ export function GuildSwitcher({ currentGuildId, guilds }: GuildSwitcherProps) {
           )}
 
           {guilds.length === 0 && (
-            <p className="px-2 py-4 text-center text-sm text-gray-500">
-              No servers found
-            </p>
+            <p className="px-2 py-4 text-center text-sm text-gray-500">No servers found</p>
           )}
-          
+
           {guilds.length > 0 && filteredGuilds.length === 0 && (
             <p className="px-2 py-4 text-center text-sm text-gray-500">
               No servers match "{searchQuery}"
@@ -200,26 +197,30 @@ interface GuildItemProps {
 function GuildItem({ guild, isSelected, onSelect, iconUrl }: GuildItemProps) {
   const handleInstallBot = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || "1397414095753318522";
-    const inviteUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=1099780064336&scope=bot+applications.commands&guild_id=${guild.id}`;
-    window.open(inviteUrl, '_blank');
+    // const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || "1397414095753318522";
+    // const inviteUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=1099780064336&scope=bot+applications.commands&guild_id=${guild.id}`;
+
+    // const inviteUrl = `https://discord.com/oauth2/authorize?client_id=${
+    //   process.env.NODE_ENV === "production" ? "1397412199869186090" : "1397414095753318522"
+    // }`;
+
+    const inviteUrl = "https://discord.com/oauth2/authorize?client_id=1397414095753318522";
+
+    window.open(inviteUrl, "_blank");
   };
 
   return (
     <button
-      onClick={() => guild.botInstalled ? onSelect(guild.id) : handleInstallBot(new MouseEvent('click') as any)}
+      onClick={() =>
+        guild.botInstalled ? onSelect(guild.id) : handleInstallBot(new MouseEvent("click") as any)
+      }
       className={cn(
         "flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors",
         isSelected ? "bg-gray-100" : "hover:bg-gray-50"
       )}
     >
       <div className="relative">
-        <StableAvatar
-          src={iconUrl}
-          alt={guild.name}
-          size={32}
-          fallbackClassName="bg-gray-400"
-        />
+        <StableAvatar src={iconUrl} alt={guild.name} size={32} fallbackClassName="bg-gray-400" />
         {guild.botInstalled && (
           <div className="absolute -bottom-1 -right-1 rounded-full bg-green-500 p-0.5">
             <Bot className="h-3 w-3 text-white" />
@@ -228,9 +229,7 @@ function GuildItem({ guild, isSelected, onSelect, iconUrl }: GuildItemProps) {
       </div>
       <div className="flex-1 overflow-hidden">
         <p className="truncate text-sm font-medium text-gray-900">{guild.name}</p>
-        {!guild.botInstalled && (
-          <p className="text-xs text-gray-500">Bot not installed</p>
-        )}
+        {!guild.botInstalled && <p className="text-xs text-gray-500">Bot not installed</p>}
       </div>
       <div className="flex items-center gap-2">
         {!guild.botInstalled ? (
@@ -240,9 +239,7 @@ function GuildItem({ guild, isSelected, onSelect, iconUrl }: GuildItemProps) {
           </Badge>
         ) : (
           <>
-            {isSelected && (
-              <Check className="h-4 w-4 text-blue-600" />
-            )}
+            {isSelected && <Check className="h-4 w-4 text-blue-600" />}
             {guild.owner && (
               <Badge variant="secondary" className="text-xs">
                 Owner

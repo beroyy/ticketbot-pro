@@ -26,6 +26,7 @@ import {
 import { ticketQueries } from "./queries";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
+import { useTicketDetailEvents } from "@/hooks/use-ticket-events";
 
 type TicketDetailProps = {
   ticket: any;
@@ -44,6 +45,19 @@ export function TicketDetail({
 }: TicketDetailProps) {
   const queryClient = useQueryClient();
   const [messageText, setMessageText] = useState("");
+
+  // Subscribe to real-time events for this ticket
+  useTicketDetailEvents(ticket.id.replace("#", ""), guildId, {
+    onTicketDeleted: () => {
+      toast.info("This ticket has been deleted");
+      onClose();
+    },
+    onTicketUpdated: (changes) => {
+      // The query invalidation in the hook will handle the UI update
+      const changedFields = Object.keys(changes).join(", ");
+      toast.info(`Ticket updated: ${changedFields}`);
+    },
+  });
 
   const { data: messages = [], isLoading: messagesLoading } = useQuery({
     ...ticketQueries.messages(ticket.id.replace("#", ""), guildId),

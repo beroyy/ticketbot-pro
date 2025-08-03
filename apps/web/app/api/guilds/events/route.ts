@@ -1,5 +1,6 @@
 import { getServerSession } from "@/lib/auth-server";
 import { botEvents, type SSEEvent } from "@/lib/sse/bot-events";
+import { getAccessibleGuilds } from "@ticketsbot/core/domains";
 
 // Force dynamic to prevent static optimization
 export const dynamic = 'force-dynamic';
@@ -57,20 +58,32 @@ export async function GET(request: Request) {
         }
       };
       
-      // TODO: Implement guild filtering based on user permissions
-      // For now, subscribe only to user-specific events
-      // In production, we should:
-      // 1. Get user's Discord ID from Better Auth
-      // 2. Query all guilds where user is owner or team member
-      // 3. Subscribe to those guild channels as well
-      
+      // Subscribe to user-specific events
       const unsubscribe = botEvents.subscribeToUserEvents(userId, handleEvent);
+      
+      // Subscribe to guild events for all accessible guilds
+      const guildUnsubscribers: Array<() => void> = [];
+      
+      if (session.user.discordUserId) {
+        try {
+          const accessibleGuildIds = await getAccessibleGuilds(session.user.discordUserId);
+          console.log(`[SSE] User ${userId} has access to ${accessibleGuildIds.length} guilds`);
+          
+          for (const guildId of accessibleGuildIds) {
+            const unsub = botEvents.subscribeToGuildEvents(guildId, handleEvent);
+            guildUnsubscribers.push(unsub);
+          }
+        } catch (error) {
+          console.error('[SSE] Failed to get accessible guilds:', error);
+        }
+      }
       
       // Cleanup on client disconnect
       const cleanup = () => {
         console.log(`[SSE] Cleaning up connection for user ${userId}`);
         clearInterval(heartbeat);
         unsubscribe();
+        guildUnsubscribers.forEach(unsub => unsub());
         try {
           controller.close();
         } catch (_error) {

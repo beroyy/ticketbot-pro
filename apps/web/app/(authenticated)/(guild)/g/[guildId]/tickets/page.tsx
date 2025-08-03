@@ -18,7 +18,7 @@ interface TicketsPageProps {
 
 export default async function TicketsPage({ params, searchParams }: TicketsPageProps) {
   // Use guild ID from URL params
-  const guildId = params.guildId;
+  const { guildId } = await params;
   
   return (
     <RequirePermission 
@@ -47,7 +47,7 @@ async function TicketsPageContent({ params, searchParams }: TicketsPageProps) {
   const selectedTicketId = searchParamsData.ticket || null;
   
   // Use guild ID from URL params
-  const guildId = params.guildId;
+  const { guildId } = await params;
   
   try {
     // Get session for user data

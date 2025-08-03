@@ -8,6 +8,7 @@ import { TicketsControls } from "./tickets-controls";
 import { TicketDetail } from "./ticket-detail";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
+import { useTicketListEvents, useEnsureSSEConnection } from "@/hooks/use-ticket-events";
 
 type TicketsDashboardProps = {
   initialTickets: any[];
@@ -31,6 +32,23 @@ export function TicketsDashboard({
   const router = useRouter();
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(initialSelectedId);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Ensure SSE connection is active for real-time updates
+  useEnsureSSEConnection();
+
+  // Subscribe to ticket list events
+  useTicketListEvents(guildId, {
+    onTicketDeleted: (ticketId) => {
+      // Clear selection if the deleted ticket was selected
+      if (selectedTicketId === ticketId.toString()) {
+        setSelectedTicketId(null);
+        // Update URL to remove ticket param
+        const params = new URLSearchParams(window.location.search);
+        params.delete("ticket");
+        router.push(`/tickets?${params.toString()}`);
+      }
+    },
+  });
 
   const {
     data: tickets = initialTickets,

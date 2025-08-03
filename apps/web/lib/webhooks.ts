@@ -59,6 +59,37 @@ export interface TicketStatusData {
   reason?: string;
 }
 
+export interface TicketCreatedData {
+  guildId: string;
+  ticketId: number;
+  ticketNumber: number;
+  subject: string;
+  openerId: string;
+  openerUsername: string;
+  panelId?: string;
+  categoryId?: string;
+}
+
+export interface TicketUpdatedData {
+  guildId: string;
+  ticketId: number;
+  ticketNumber: number;
+  changes: {
+    subject?: { old: string; new: string };
+    priority?: { old: string; new: string };
+    tags?: { added: string[]; removed: string[] };
+  };
+  actorId: string;
+}
+
+export interface TicketDeletedData {
+  guildId: string;
+  ticketId: number;
+  ticketNumber: number;
+  deletedBy: string;
+  reason?: string;
+}
+
 // Team Events
 export interface TeamRoleData {
   guildId: string;
@@ -91,6 +122,9 @@ export type BotEventType =
   | 'guild.joined'
   | 'guild.left'
   | 'guild.setup_complete'
+  | 'ticket.created'
+  | 'ticket.updated'
+  | 'ticket.deleted'
   | 'ticket.message_sent'
   | 'ticket.status_changed'
   | 'ticket.claimed'
@@ -106,6 +140,9 @@ export type BotEvent =
   | { type: 'guild.joined'; data: GuildJoinedData }
   | { type: 'guild.left'; data: GuildLeftData }
   | { type: 'guild.setup_complete'; data: SetupCompleteData }
+  | { type: 'ticket.created'; data: TicketCreatedData }
+  | { type: 'ticket.updated'; data: TicketUpdatedData }
+  | { type: 'ticket.deleted'; data: TicketDeletedData }
   | { type: 'ticket.message_sent'; data: TicketMessageData }
   | { type: 'ticket.status_changed'; data: TicketStatusData }
   | { type: 'ticket.claimed'; data: TicketStatusData }

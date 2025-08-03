@@ -78,6 +78,31 @@ async function handleBotEvent(event: BotEvent): Promise<void> {
       break;
     }
 
+    case 'ticket.created': {
+      const { data } = event;
+      // Notify guild members about new ticket
+      botEvents.notifyGuild(data.guildId, event);
+      console.log(`[SSE] Sent ticket.created notification for ticket #${data.ticketNumber}`);
+      break;
+    }
+
+    case 'ticket.updated': {
+      const { data } = event;
+      // Notify both guild and specific ticket channels
+      botEvents.notifyGuild(data.guildId, event);
+      botEvents.notifyTicket(data.guildId, data.ticketId, event);
+      console.log(`[SSE] Sent ticket.updated notification for ticket #${data.ticketNumber}`);
+      break;
+    }
+
+    case 'ticket.deleted': {
+      const { data } = event;
+      // Notify guild members
+      botEvents.notifyGuild(data.guildId, event);
+      console.log(`[SSE] Sent ticket.deleted notification for ticket #${data.ticketNumber}`);
+      break;
+    }
+
     case 'ticket.message_sent': {
       const { data } = event;
       // Notify both guild and specific ticket channels

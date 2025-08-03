@@ -22,6 +22,7 @@ export {
   getSettingsUnchecked,
   ensureWithDefaults,
   Blacklist,
+  getAccessibleGuilds,
 } from "./guild";
 
 // Export static methods from Ticket domain (slimmed down)

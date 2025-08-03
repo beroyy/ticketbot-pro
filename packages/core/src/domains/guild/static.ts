@@ -215,3 +215,21 @@ export const Blacklist = {
     return !!entry;
   },
 };
+
+/**
+ * Get all guilds a user has access to
+ * Used for SSE subscription to determine which guild events a user should receive
+ */
+export const getAccessibleGuilds = async (discordUserId: string): Promise<string[]> => {
+  const guilds = await prisma.guild.findMany({
+    where: {
+      OR: [
+        { ownerDiscordId: discordUserId },
+        { guildMemberPermissions: { some: { discordId: discordUserId } } }
+      ]
+    },
+    select: { id: true }
+  });
+  
+  return guilds.map(g => g.id);
+};

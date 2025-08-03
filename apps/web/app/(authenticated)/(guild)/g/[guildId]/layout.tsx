@@ -23,10 +23,13 @@ export default async function GuildLayout({
     redirect("/login");
   }
   
+  // Await params before accessing properties
+  const { guildId } = await params;
+  
   // Validate guild access
   const hasAccess = await validateGuildAccess(
     session.user.discordUserId!,
-    params.guildId
+    guildId
   );
   
   if (!hasAccess) {
@@ -35,7 +38,7 @@ export default async function GuildLayout({
   }
   
   // Get guild details
-  const guild = await getGuildWithAccess(session.user.discordUserId!, params.guildId);
+  const guild = await getGuildWithAccess(session.user.discordUserId!, guildId);
   
   if (!guild) {
     // This shouldn't happen if validateGuildAccess passed, but handle it
@@ -46,7 +49,7 @@ export default async function GuildLayout({
   // Each page/component will fetch permissions as needed for server-side checks
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar guildId={params.guildId} />
+      <Navbar guildId={guildId} />
       <main>{children}</main>
     </div>
   );

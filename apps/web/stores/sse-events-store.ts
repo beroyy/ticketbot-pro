@@ -10,11 +10,10 @@ import type { BotEvent } from "@/lib/webhooks";
 
 // SSE event types match the bot webhook events structure
 export interface SSEEventType {
-  type: BotEvent['type'];
-  data: BotEvent['data'];
+  type: BotEvent["type"];
+  data: BotEvent["data"];
   timestamp: number;
 }
-
 
 export type ConnectionStatus = "disconnected" | "connecting" | "connected" | "error";
 
@@ -204,7 +203,7 @@ async function handleEventSideEffects(event: SSEEventType) {
       });
 
       // Refresh server list if on guilds page
-      if (window.location.pathname === '/guilds') {
+      if (window.location.pathname === "/guilds") {
         window.location.reload();
       }
       break;
@@ -215,9 +214,9 @@ async function handleEventSideEffects(event: SSEEventType) {
         description: "The server is no longer available.",
         duration: 4000,
       });
-      
+
       // Refresh server list if on guilds page
-      if (window.location.pathname === '/guilds') {
+      if (window.location.pathname === "/guilds") {
         window.location.reload();
       }
       break;
@@ -231,10 +230,42 @@ async function handleEventSideEffects(event: SSEEventType) {
       break;
     }
 
+    case "ticket.created": {
+      const data = event.data as import("@/lib/webhooks").TicketCreatedData;
+      toast.success(`New ticket #${data.ticketNumber} created`, {
+        description: `Subject: ${data.subject}`,
+        duration: 4000,
+      });
+      break;
+    }
+
+    case "ticket.updated": {
+      const data = event.data as import("@/lib/webhooks").TicketUpdatedData;
+      const changes = [];
+      if (data.changes.subject) changes.push("subject");
+      if (data.changes.priority) changes.push("priority");
+      if (data.changes.tags) changes.push("tags");
+      
+      toast.info(`Ticket #${data.ticketNumber} updated`, {
+        description: `Changed: ${changes.join(", ")}`,
+        duration: 3000,
+      });
+      break;
+    }
+
+    case "ticket.deleted": {
+      const data = event.data as import("@/lib/webhooks").TicketDeletedData;
+      toast.warning(`Ticket #${data.ticketNumber} deleted`, {
+        description: data.reason || "No reason provided",
+        duration: 4000,
+      });
+      break;
+    }
+
     case "ticket.message_sent": {
       const data = event.data as import("@/lib/webhooks").TicketMessageData;
       // Only show for staff messages in tickets
-      if (data.messageType === 'staff' || data.messageType === 'customer') {
+      if (data.messageType === "staff" || data.messageType === "customer") {
         toast.info(`New message in ticket #${data.ticketNumber}`, {
           description: `From: ${data.messageType}`,
           duration: 3000,
@@ -250,7 +281,7 @@ async function handleEventSideEffects(event: SSEEventType) {
       });
       break;
     }
-    
+
     case "ticket.claimed": {
       const data = event.data as import("@/lib/webhooks").TicketStatusData;
       toast.info(`Ticket #${data.ticketNumber} claimed`, {
@@ -258,7 +289,7 @@ async function handleEventSideEffects(event: SSEEventType) {
       });
       break;
     }
-    
+
     case "ticket.closed": {
       const data = event.data as import("@/lib/webhooks").TicketStatusData;
       toast.info(`Ticket #${data.ticketNumber} closed`, {
@@ -271,7 +302,7 @@ async function handleEventSideEffects(event: SSEEventType) {
     case "team.role_updated":
     case "team.role_deleted": {
       const data = event.data as import("@/lib/webhooks").TeamRoleData;
-      const action = event.type.split('.')[1];
+      const action = event.type.split(".")[1];
       toast.info(`Team role ${action}`, {
         description: `Role: ${data.roleName}`,
         duration: 3000,

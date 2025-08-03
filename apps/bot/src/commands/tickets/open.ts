@@ -12,6 +12,7 @@ import {
 import { Ticket, TicketLifecycle, getSettingsUnchecked } from "@ticketsbot/core/domains";
 import { captureEvent } from "@ticketsbot/core/analytics";
 import { withTransaction, afterTransaction } from "@ticketsbot/core/context";
+import { getWebhookClient } from "@bot/lib/webhook-client";
 import type { ChatInputCommandInteraction } from "discord.js";
 
 export class OpenCommand extends TicketCommandBase {
@@ -134,6 +135,24 @@ export class OpenCommand extends TicketCommandBase {
               hasSubject: !!subjectResult.value,
               channelCreated: true,
             });
+
+            // Send webhook notification for real-time updates
+            const webhookClient = getWebhookClient();
+            if (webhookClient) {
+              await webhookClient.sendEvent({
+                type: 'ticket.created',
+                data: {
+                  guildId: guild.id,
+                  ticketId: ticket.id,
+                  ticketNumber: ticket.number,
+                  subject: subjectResult.value || '',
+                  openerId: userId,
+                  openerUsername: username,
+                  panelId: undefined,
+                  categoryId: channel.parentId || undefined,
+                }
+              });
+            }
           } catch (error) {
             container.logger.error("Error in Discord operations:", error);
           }
