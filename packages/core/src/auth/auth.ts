@@ -114,20 +114,6 @@ const createAuthInstance = () => {
       },
       expiresIn: 60 * 60 * 24 * 7,
     },
-    rateLimit: {
-      enabled: process.env["NODE_ENV"] === "production",
-      window: 60, // 60 seconds
-      max: 100, // 100 requests per window
-      storage: "memory",
-      customRules: {
-        "/auth/signin": { window: 300, max: 5 },
-        "/auth/signup": { window: 300, max: 3 },
-        "/auth/callback/*": { window: 60, max: 10 },
-        "/auth/forgot-password": { window: 900, max: 3 },
-        "/auth/reset-password": { window: 300, max: 5 },
-        "/auth/me": { window: 60, max: 30 },
-      },
-    },
     baseURL: apiOrigin,
     basePath: "/auth",
     trustedOrigins: [webOrigin, apiOrigin],

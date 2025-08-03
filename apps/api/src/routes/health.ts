@@ -3,7 +3,6 @@ import { Redis } from "@ticketsbot/core";
 import { prisma } from "@ticketsbot/core/prisma";
 import { createRoute } from "../factory";
 import { compositions } from "../middleware/context";
-import { env, isProduction } from "../env";
 
 // Response schemas for type safety and documentation
 const _BasicHealthResponse = z.object({
@@ -33,12 +32,6 @@ const _DetailedHealthResponse = z.object({
       status: z.enum(["healthy", "unhealthy"]),
       redisEnabled: z.boolean(),
     }),
-    rateLimit: z
-      .object({
-        enabled: z.boolean(),
-        storage: z.enum(["redis", "memory"]),
-      })
-      .optional(),
   }),
 });
 
@@ -105,14 +98,6 @@ export const healthRoutes = createRoute()
         result.status = result.status === "unhealthy" ? "unhealthy" : "degraded";
       }
     }
-
-    // Add rate limit status
-    const rateLimitEnabled = isProduction() || env.RATE_LIMIT_ENABLED === true;
-    result.services.rateLimit = {
-      enabled: rateLimitEnabled,
-      storage:
-        Redis.isAvailable() && result.services.redis?.status === "healthy" ? "redis" : "memory",
-    };
 
     // Overall status determination
     if (result.services.database.status === "unhealthy") {
