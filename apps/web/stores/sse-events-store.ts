@@ -5,19 +5,16 @@ import { devtools } from "zustand/middleware";
 import { toast } from "sonner";
 // import { dialog } from "@/lib/dialog";
 
-export type SSEEventType =
-  | { type: "guild-joined"; guildId: string; guildName: string; timestamp: number }
-  | { type: "guild-left"; guildId: string; guildName: string; timestamp: number }
-  | { type: "bot-configured"; guildId: string; timestamp: number }
-  | {
-      type: "ticket-created";
-      ticketId: string;
-      subject: string;
-      guildId: string;
-      timestamp: number;
-    }
-  | { type: "ticket-closed"; ticketId: string; guildId: string; timestamp: number }
-  | { type: "settings-updated"; guildId: string; changes: Record<string, any>; timestamp: number };
+// Import the BotEvent type from webhooks
+import type { BotEvent } from "@/lib/webhooks";
+
+// SSE event types match the bot webhook events structure
+export interface SSEEventType {
+  type: BotEvent['type'];
+  data: BotEvent['data'];
+  timestamp: number;
+}
+
 
 export type ConnectionStatus = "disconnected" | "connecting" | "connected" | "error";
 
@@ -197,60 +194,108 @@ export const useSSEEventStore = create<SSEEventStore>()(
 // Side effects handler - kept outside store to avoid re-renders
 async function handleEventSideEffects(event: SSEEventType) {
   switch (event.type) {
-    case "guild-joined": {
+    case "guild.joined": {
+      const data = event.data as import("@/lib/webhooks").GuildJoinedData;
       // Show a toast first
-      toast.success(`Bot installed in ${event.guildName}!`, {
+      toast.success(`Bot installed in ${data.guildName}!`, {
         description: "The server list has been updated.",
         duration: 5000,
-        id: `guild-joined-${event.guildId}`, // Prevent duplicate toasts
+        id: `guild-joined-${data.guildId}`, // Prevent duplicate toasts
       });
 
-      // const confirmed = await dialog.confirm({
-      //   title: "Bot Successfully Installed!",
-      //   description: `${event.guildName} has been added to your servers. Would you like to configure it now?`,
-      //   confirmText: "Configure Now",
-      //   cancelText: "Later",
-      // });
-
-      // if (confirmed) {
-      //   window.location.href = `/g/${event.guildId}/settings`;
-      // }
+      // Refresh server list if on guilds page
+      if (window.location.pathname === '/guilds') {
+        window.location.reload();
+      }
       break;
     }
 
-    case "guild-left":
-      toast.info(`Bot removed from ${event.guildName}`, {
+    case "guild.left": {
+      toast.info(`Bot removed from guild`, {
         description: "The server is no longer available.",
         duration: 4000,
       });
+      
+      // Refresh server list if on guilds page
+      if (window.location.pathname === '/guilds') {
+        window.location.reload();
+      }
       break;
+    }
 
-    case "ticket-created":
-      toast.info(`New ticket: ${event.subject}`, {
-        description: "Click to view the ticket.",
-        duration: 4000,
-        action: {
-          label: "View",
-          onClick: () => {
-            window.location.href = `/g/${event.guildId}/tickets/${event.ticketId}`;
-          },
-        },
+    case "guild.setup_complete": {
+      toast.success("Bot setup completed!", {
+        description: "Your bot is now ready to use.",
+        duration: 5000,
       });
       break;
+    }
 
-    case "ticket-closed":
-      toast.info("Ticket closed", {
-        description: "A ticket has been closed.",
+    case "ticket.message_sent": {
+      const data = event.data as import("@/lib/webhooks").TicketMessageData;
+      // Only show for staff messages in tickets
+      if (data.messageType === 'staff' || data.messageType === 'customer') {
+        toast.info(`New message in ticket #${data.ticketNumber}`, {
+          description: `From: ${data.messageType}`,
+          duration: 3000,
+        });
+      }
+      break;
+    }
+
+    case "ticket.status_changed": {
+      const data = event.data as import("@/lib/webhooks").TicketStatusData;
+      toast.info(`Ticket #${data.ticketNumber} changed to ${data.newStatus}`, {
         duration: 3000,
       });
       break;
-
-    case "settings-updated":
-      toast.success("Settings updated", {
-        description: "Guild settings have been updated.",
+    }
+    
+    case "ticket.claimed": {
+      const data = event.data as import("@/lib/webhooks").TicketStatusData;
+      toast.info(`Ticket #${data.ticketNumber} claimed`, {
         duration: 3000,
       });
       break;
+    }
+    
+    case "ticket.closed": {
+      const data = event.data as import("@/lib/webhooks").TicketStatusData;
+      toast.info(`Ticket #${data.ticketNumber} closed`, {
+        duration: 3000,
+      });
+      break;
+    }
+
+    case "team.role_created":
+    case "team.role_updated":
+    case "team.role_deleted": {
+      const data = event.data as import("@/lib/webhooks").TeamRoleData;
+      const action = event.type.split('.')[1];
+      toast.info(`Team role ${action}`, {
+        description: `Role: ${data.roleName}`,
+        duration: 3000,
+      });
+      break;
+    }
+
+    case "team.member_assigned":
+    case "team.member_unassigned": {
+      const data = event.data as import("@/lib/webhooks").TeamMemberData;
+      const action = event.type === "team.member_assigned" ? "assigned to" : "unassigned from";
+      toast.info(`${data.username} ${action} ${data.roleName}`, {
+        duration: 3000,
+      });
+      break;
+    }
+
+    case "member.left": {
+      const data = event.data as import("@/lib/webhooks").MemberLeftData;
+      toast.info(`${data.username} left the server`, {
+        duration: 3000,
+      });
+      break;
+    }
 
     default:
       // Log unhandled events for debugging

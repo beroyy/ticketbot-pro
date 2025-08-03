@@ -19,8 +19,11 @@ export const GuildDeleteListener = ListenerFactory.on("guildDelete", async (guil
     // Send webhook notification
     const webhookClient = getWebhookClient();
     if (webhookClient) {
-      await webhookClient.sendGuildLeft({
-        guildId: guildId,
+      await webhookClient.sendEvent({
+        type: 'guild.left',
+        data: {
+          guildId: guildId,
+        }
       });
     }
 

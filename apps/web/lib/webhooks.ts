@@ -16,6 +16,7 @@ export interface WebhookPayload<T = unknown> {
   data: T;
 }
 
+// Guild Events
 export interface GuildJoinedData {
   guildId: string;
   guildName: string;
@@ -33,6 +34,92 @@ export interface SetupCompleteData {
   transcriptsChannelId?: string;
   logChannelId?: string;
   defaultRoleId?: string;
+}
+
+// Ticket Events
+export interface TicketMessageData {
+  guildId: string;
+  ticketId: number;
+  ticketNumber: number;
+  messageId: string;
+  authorId: string;
+  authorUsername: string;
+  messageType: 'customer' | 'staff' | 'bot';
+  hasAttachments: boolean;
+  messageLength: number;
+}
+
+export interface TicketStatusData {
+  guildId: string;
+  ticketId: number;
+  ticketNumber: number;
+  oldStatus: string;
+  newStatus: string;
+  actorId: string;
+  reason?: string;
+}
+
+// Team Events
+export interface TeamRoleData {
+  guildId: string;
+  roleId: string;
+  roleName: string;
+  action: 'created' | 'updated' | 'deleted';
+  changes?: Record<string, any>;
+}
+
+export interface TeamMemberData {
+  guildId: string;
+  userId: string;
+  username: string;
+  roleId: string;
+  roleName: string;
+  action: 'assigned' | 'unassigned';
+}
+
+// Member Events
+export interface MemberLeftData {
+  guildId: string;
+  userId: string;
+  username: string;
+  hadOpenTickets: boolean;
+  wasTeamMember: boolean;
+}
+
+// Unified Bot Event Type
+export type BotEventType = 
+  | 'guild.joined'
+  | 'guild.left'
+  | 'guild.setup_complete'
+  | 'ticket.message_sent'
+  | 'ticket.status_changed'
+  | 'ticket.claimed'
+  | 'ticket.closed'
+  | 'team.role_created'
+  | 'team.role_updated'
+  | 'team.role_deleted'
+  | 'team.member_assigned'
+  | 'team.member_unassigned'
+  | 'member.left';
+
+export type BotEvent = 
+  | { type: 'guild.joined'; data: GuildJoinedData }
+  | { type: 'guild.left'; data: GuildLeftData }
+  | { type: 'guild.setup_complete'; data: SetupCompleteData }
+  | { type: 'ticket.message_sent'; data: TicketMessageData }
+  | { type: 'ticket.status_changed'; data: TicketStatusData }
+  | { type: 'ticket.claimed'; data: TicketStatusData }
+  | { type: 'ticket.closed'; data: TicketStatusData }
+  | { type: 'team.role_created'; data: TeamRoleData }
+  | { type: 'team.role_updated'; data: TeamRoleData }
+  | { type: 'team.role_deleted'; data: TeamRoleData }
+  | { type: 'team.member_assigned'; data: TeamMemberData }
+  | { type: 'team.member_unassigned'; data: TeamMemberData }
+  | { type: 'member.left'; data: MemberLeftData };
+
+export interface UnifiedWebhookPayload {
+  event: BotEvent;
+  timestamp: string;
 }
 
 /**
@@ -120,6 +207,63 @@ export async function validateWebhookRequest<T = unknown>(
     // Validate payload structure
     if (!payload.event || !payload.timestamp || !payload.data) {
       return { valid: false, error: "Invalid payload structure" };
+    }
+
+    return { valid: true, payload };
+  } catch (error) {
+    console.error("Webhook validation error:", error);
+    return { valid: false, error: "Internal validation error" };
+  }
+}
+
+/**
+ * Validates and parses unified bot event webhook request
+ */
+export async function validateUnifiedWebhookRequest(
+  request: NextRequest,
+  secret: string
+): Promise<{ valid: true; payload: UnifiedWebhookPayload } | { valid: false; error: string }> {
+  try {
+    // Get headers
+    const headers = getWebhookHeaders(request);
+    if (!headers) {
+      return { valid: false, error: "Missing webhook headers" };
+    }
+
+    // Get body
+    const body = await request.text();
+    if (!body) {
+      return { valid: false, error: "Empty request body" };
+    }
+
+    // Validate signature
+    const isValid = validateWebhookSignature(
+      body,
+      headers.signature,
+      headers.timestamp,
+      secret
+    );
+
+    if (!isValid) {
+      return { valid: false, error: "Invalid webhook signature" };
+    }
+
+    // Parse payload
+    let payload: UnifiedWebhookPayload;
+    try {
+      payload = JSON.parse(body);
+    } catch {
+      return { valid: false, error: "Invalid JSON payload" };
+    }
+
+    // Validate payload structure
+    if (!payload.event || !payload.timestamp) {
+      return { valid: false, error: "Invalid payload structure" };
+    }
+
+    // Validate event structure
+    if (!payload.event.type || !payload.event.data) {
+      return { valid: false, error: "Invalid event structure" };
     }
 
     return { valid: true, payload };

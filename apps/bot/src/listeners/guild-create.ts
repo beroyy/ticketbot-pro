@@ -49,11 +49,14 @@ export const GuildCreateListener = ListenerFactory.on("guildCreate", async (guil
     // 6. Send webhook notification
     const webhookClient = getWebhookClient();
     if (webhookClient) {
-      await webhookClient.sendGuildJoined({
-        guildId: parseDiscordId(guild.id),
-        guildName: guild.name,
-        ownerId: parseDiscordId(guild.ownerId),
-        memberCount: guild.memberCount,
+      await webhookClient.sendEvent({
+        type: 'guild.joined',
+        data: {
+          guildId: parseDiscordId(guild.id),
+          guildName: guild.name,
+          ownerId: parseDiscordId(guild.ownerId),
+          memberCount: guild.memberCount,
+        }
       });
     }
   } catch (error) {

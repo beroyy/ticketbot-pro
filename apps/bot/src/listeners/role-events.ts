@@ -2,6 +2,7 @@ import { ListenerFactory } from "@bot/lib/sapphire-extensions";
 import { Event } from "@ticketsbot/core/domains";
 import { container } from "@sapphire/framework";
 import { Actor, type DiscordActor } from "@ticketsbot/core/context";
+import { getWebhookClient } from "@bot/lib/webhook-client";
 import type { Role } from "discord.js";
 
 const ROLE_PREFIX = "Tickets ";
@@ -37,6 +38,20 @@ export const RoleCreateListener = ListenerFactory.on(
             permissions: role.permissions.toArray(),
           }
         });
+
+        // Send webhook notification
+        const webhookClient = getWebhookClient();
+        if (webhookClient) {
+          await webhookClient.sendEvent({
+            type: 'team.role_created',
+            data: {
+              guildId: role.guild.id,
+              roleId: role.id,
+              roleName: role.name,
+              action: 'created',
+            }
+          });
+        }
       });
     } catch (error) {
       container.logger.error(`Failed to track role creation:`, error);
@@ -74,6 +89,20 @@ export const RoleDeleteListener = ListenerFactory.on(
             hadMembers: role.members.size,
           }
         });
+
+        // Send webhook notification
+        const webhookClient = getWebhookClient();
+        if (webhookClient) {
+          await webhookClient.sendEvent({
+            type: 'team.role_deleted',
+            data: {
+              guildId: role.guild.id,
+              roleId: role.id,
+              roleName: role.name,
+              action: 'deleted',
+            }
+          });
+        }
       });
     } catch (error) {
       container.logger.error(`Failed to track role deletion:`, error);
@@ -116,6 +145,20 @@ export const RoleUpdateListener = ListenerFactory.on(
               renamedFrom: oldRole.name,
             }
           });
+
+          // Send webhook notification
+          const webhookClient = getWebhookClient();
+          if (webhookClient) {
+            await webhookClient.sendEvent({
+              type: 'team.role_created',
+              data: {
+                guildId: newRole.guild.id,
+                roleId: newRole.id,
+                roleName: newRole.name,
+                action: 'created',
+              }
+            });
+          }
         } else if (wasTicketRole && !isTicketRole) {
           // Role left ticket system
           await Event.create({
@@ -130,6 +173,20 @@ export const RoleUpdateListener = ListenerFactory.on(
               renamedTo: newRole.name,
             }
           });
+
+          // Send webhook notification
+          const webhookClient = getWebhookClient();
+          if (webhookClient) {
+            await webhookClient.sendEvent({
+              type: 'team.role_deleted',
+              data: {
+                guildId: oldRole.guild.id,
+                roleId: oldRole.id,
+                roleName: oldRole.name,
+                action: 'deleted',
+              }
+            });
+          }
         } else if (wasTicketRole && isTicketRole) {
           // Track changes
           const changes: Record<string, any> = {};
@@ -157,6 +214,21 @@ export const RoleUpdateListener = ListenerFactory.on(
                 changes,
               }
             });
+
+            // Send webhook notification for updates
+            const webhookClient = getWebhookClient();
+            if (webhookClient) {
+              await webhookClient.sendEvent({
+                type: 'team.role_updated',
+                data: {
+                  guildId: newRole.guild.id,
+                  roleId: newRole.id,
+                  roleName: newRole.name,
+                  action: 'updated',
+                  changes,
+                }
+              });
+            }
           }
         }
       });

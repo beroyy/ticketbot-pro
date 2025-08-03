@@ -9,13 +9,13 @@ import { useSSEEventStore, type SSEEventType } from "@/stores/sse-events-store";
  * @param callback - Function to call when the event occurs
  *
  * @example
- * useSSEEvent('guild-joined', (event) => {
- *   console.log(`Guild ${event.guildName} joined!`);
+ * useSSEEvent('guild.joined', (event) => {
+ *   console.log(`Guild ${event.data.guildName} joined!`);
  * });
  */
 export function useSSEEvent<T extends SSEEventType["type"]>(
   eventType: T,
-  callback: (event: Extract<SSEEventType, { type: T }>) => void
+  callback: (event: SSEEventType) => void
 ) {
   // Use ref to avoid re-subscribing on every render
   const callbackRef = useRef(callback);
@@ -26,7 +26,7 @@ export function useSSEEvent<T extends SSEEventType["type"]>(
       (state) => state.lastEvent,
       (event) => {
         if (event && event.type === eventType) {
-          callbackRef.current(event as Extract<SSEEventType, { type: T }>);
+          callbackRef.current(event);
         }
       }
     );
@@ -95,13 +95,16 @@ export function useGuildSSEEvents(
 export function useGuildListRefresh() {
   const router = useRouter();
 
-  useSSEEvent("guild-joined", (event) => {
-    console.log(`[SSE Hook] Guild joined: ${event.guildName}, refreshing router`);
-    router.refresh();
+  useSSEEvent("guild.joined", (event) => {
+    if (event.type === "guild.joined") {
+      const data = event.data as import("@/lib/webhooks").GuildJoinedData;
+      console.log(`[SSE Hook] Guild joined: ${data.guildName}, refreshing router`);
+      router.refresh();
+    }
   });
 
-  useSSEEvent("guild-left", (event) => {
-    console.log(`[SSE Hook] Guild left: ${event.guildName}, refreshing router`);
+  useSSEEvent("guild.left", () => {
+    console.log(`[SSE Hook] Guild left, refreshing router`);
     router.refresh();
   });
 }

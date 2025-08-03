@@ -31,6 +31,92 @@ export interface SetupCompleteData {
   defaultRoleId?: string;
 }
 
+// Ticket Events
+export interface TicketMessageData {
+  guildId: string;
+  ticketId: number;
+  ticketNumber: number;
+  messageId: string;
+  authorId: string;
+  authorUsername: string;
+  messageType: 'customer' | 'staff' | 'bot';
+  hasAttachments: boolean;
+  messageLength: number;
+}
+
+export interface TicketStatusData {
+  guildId: string;
+  ticketId: number;
+  ticketNumber: number;
+  oldStatus: string;
+  newStatus: string;
+  actorId: string;
+  reason?: string;
+}
+
+// Team Events
+export interface TeamRoleData {
+  guildId: string;
+  roleId: string;
+  roleName: string;
+  action: 'created' | 'updated' | 'deleted';
+  changes?: Record<string, any>;
+}
+
+export interface TeamMemberData {
+  guildId: string;
+  userId: string;
+  username: string;
+  roleId: string;
+  roleName: string;
+  action: 'assigned' | 'unassigned';
+}
+
+// Member Events
+export interface MemberLeftData {
+  guildId: string;
+  userId: string;
+  username: string;
+  hadOpenTickets: boolean;
+  wasTeamMember: boolean;
+}
+
+// Unified Bot Event Type
+export type BotEventType = 
+  | 'guild.joined'
+  | 'guild.left'
+  | 'guild.setup_complete'
+  | 'ticket.message_sent'
+  | 'ticket.status_changed'
+  | 'ticket.claimed'
+  | 'ticket.closed'
+  | 'team.role_created'
+  | 'team.role_updated'
+  | 'team.role_deleted'
+  | 'team.member_assigned'
+  | 'team.member_unassigned'
+  | 'member.left';
+
+export type BotEvent = 
+  | { type: 'guild.joined'; data: GuildJoinedData }
+  | { type: 'guild.left'; data: GuildLeftData }
+  | { type: 'guild.setup_complete'; data: SetupCompleteData }
+  | { type: 'ticket.message_sent'; data: TicketMessageData }
+  | { type: 'ticket.status_changed'; data: TicketStatusData }
+  | { type: 'ticket.claimed'; data: TicketStatusData }
+  | { type: 'ticket.closed'; data: TicketStatusData }
+  | { type: 'team.role_created'; data: TeamRoleData }
+  | { type: 'team.role_updated'; data: TeamRoleData }
+  | { type: 'team.role_deleted'; data: TeamRoleData }
+  | { type: 'team.member_assigned'; data: TeamMemberData }
+  | { type: 'team.member_unassigned'; data: TeamMemberData }
+  | { type: 'member.left'; data: MemberLeftData };
+
+export interface UnifiedWebhookPayload {
+  event: BotEvent;
+  timestamp: string;
+}
+
 export class WebhookClient {
   private readonly baseUrl: string;
   private readonly secret: string;
@@ -63,22 +149,24 @@ export class WebhookClient {
     return `sha256=${signature}`;
   }
 
+
   /**
-   * Sends a webhook to the web application
+   * Sends a unified bot event to the web application
+   * This is the preferred method for all new event types
    */
-  private async sendWebhook<T = unknown>(
-    endpoint: string,
-    payload: WebhookPayload<T>
-  ): Promise<void> {
-    const url = `${this.baseUrl}/api/webhooks/bot/${endpoint}`;
+  public async sendEvent(event: BotEvent): Promise<void> {
+    const url = `${this.baseUrl}/api/webhooks/bot/events`;
     const timestamp = Date.now().toString();
+    const payload: UnifiedWebhookPayload = {
+      event,
+      timestamp: new Date().toISOString(),
+    };
     const body = JSON.stringify(payload);
     const signature = this.createSignature(body, timestamp);
 
     try {
-      this.logger.debug(`Sending webhook to ${endpoint}`, {
-        event: payload.event,
-        data: payload.data,
+      this.logger.debug(`Sending unified event ${event.type}`, {
+        event,
       });
 
       const response = await fetch(
@@ -95,53 +183,44 @@ export class WebhookClient {
         FetchResultTypes.JSON
       );
 
-      this.logger.info(`✅ Webhook sent successfully to ${endpoint}`, {
-        event: payload.event,
+      this.logger.info(`✅ Unified event ${event.type} sent successfully`, {
         response,
       });
     } catch (error) {
-      this.logger.error(`❌ Failed to send webhook to ${endpoint}`, {
-        event: payload.event,
+      this.logger.error(`❌ Failed to send unified event ${event.type}`, {
         error: error instanceof Error ? error.message : String(error),
         url,
       });
 
       // Don't throw - webhook failures shouldn't break bot operations
-      // The bot should continue working even if webhooks fail
     }
   }
 
   /**
+   * @deprecated Use sendEvent() instead
    * Notifies web app that bot joined a guild
    */
   public async sendGuildJoined(data: GuildJoinedData): Promise<void> {
-    await this.sendWebhook("guild-joined", {
-      event: "guild.joined",
-      timestamp: new Date().toISOString(),
-      data,
-    });
+    // Use the new unified method
+    await this.sendEvent({ type: 'guild.joined', data });
   }
 
   /**
+   * @deprecated Use sendEvent() instead
    * Notifies web app that bot left a guild
    */
   public async sendGuildLeft(data: GuildLeftData): Promise<void> {
-    await this.sendWebhook("guild-left", {
-      event: "guild.left",
-      timestamp: new Date().toISOString(),
-      data,
-    });
+    // Use the new unified method
+    await this.sendEvent({ type: 'guild.left', data });
   }
 
   /**
+   * @deprecated Use sendEvent() instead
    * Notifies web app that setup is complete
    */
   public async sendSetupComplete(data: SetupCompleteData): Promise<void> {
-    await this.sendWebhook("setup-complete", {
-      event: "guild.setup_complete",
-      timestamp: new Date().toISOString(),
-      data,
-    });
+    // Use the new unified method
+    await this.sendEvent({ type: 'guild.setup_complete', data });
   }
 }
 

@@ -1,5 +1,5 @@
 import { getServerSession } from "@/lib/auth-server";
-import { guildEvents, type GuildEvent } from "@/lib/sse/guild-events";
+import { botEvents, type SSEEvent } from "@/lib/sse/bot-events";
 
 // Force dynamic to prevent static optimization
 export const dynamic = 'force-dynamic';
@@ -10,7 +10,7 @@ export const runtime = 'nodejs';
 /**
  * GET /api/guilds/events
  * 
- * Server-Sent Events endpoint for real-time guild updates
+ * Server-Sent Events endpoint for real-time bot event updates
  * Requires authentication
  */
 export async function GET(request: Request) {
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
   
   // Create SSE stream
   const stream = new ReadableStream({
-    start(controller) {
+    async start(controller) {
       const encoder = new TextEncoder();
       
       // Helper to send SSE messages
@@ -46,8 +46,8 @@ export async function GET(request: Request) {
         }
       }, 30000); // Every 30 seconds
       
-      // Subscribe to user-specific events
-      const handleEvent = (event: GuildEvent) => {
+      // Subscribe to events the user is authorized to see
+      const handleEvent = (event: SSEEvent) => {
         try {
           const data = JSON.stringify(event);
           send(`data: ${data}\n\n`);
@@ -57,7 +57,14 @@ export async function GET(request: Request) {
         }
       };
       
-      const unsubscribe = guildEvents.subscribeToUserEvents(userId, handleEvent);
+      // TODO: Implement guild filtering based on user permissions
+      // For now, subscribe only to user-specific events
+      // In production, we should:
+      // 1. Get user's Discord ID from Better Auth
+      // 2. Query all guilds where user is owner or team member
+      // 3. Subscribe to those guild channels as well
+      
+      const unsubscribe = botEvents.subscribeToUserEvents(userId, handleEvent);
       
       // Cleanup on client disconnect
       const cleanup = () => {

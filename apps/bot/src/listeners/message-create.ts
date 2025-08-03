@@ -4,6 +4,7 @@ import { findByChannelId } from "@ticketsbot/core/domains/ticket";
 import { TranscriptOps } from "@bot/lib/discord-operations";
 import { container } from "@sapphire/framework";
 import { Actor, type DiscordActor } from "@ticketsbot/core/context";
+import { getWebhookClient } from "@bot/lib/webhook-client";
 import type { Message } from "discord.js";
 
 const ROLE_PREFIX = "Tickets ";
@@ -62,6 +63,25 @@ export const MessageCreateListener = ListenerFactory.on(
               hasAttachments: message.attachments.size > 0,
             },
           });
+
+          // Send webhook notification for real-time updates
+          const webhookClient = getWebhookClient();
+          if (webhookClient) {
+            await webhookClient.sendEvent({
+              type: 'ticket.message_sent',
+              data: {
+                guildId: message.guildId!,
+                ticketId: ticket.id,
+                ticketNumber: ticket.number,
+                messageId: message.id,
+                authorId: message.author.id,
+                authorUsername: message.author.username,
+                messageType: messageType as 'customer' | 'staff',
+                hasAttachments: message.attachments.size > 0,
+                messageLength: message.content.length,
+              }
+            });
+          }
         }
       });
     } catch (error) {
