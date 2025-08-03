@@ -7,7 +7,7 @@ export function DiscordSignInButton() {
   const handleSignIn = async () => {
     await authClient.signIn.social({
       provider: "discord",
-      callbackURL: typeof window !== "undefined" ? `${window.location.origin}/guilds` : undefined,
+      // callbackURL: typeof window !== "undefined" ? `${window.location.origin}/guilds` : undefined,
     });
   };
 
