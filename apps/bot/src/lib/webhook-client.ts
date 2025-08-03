@@ -7,33 +7,33 @@ import { getWebUrl } from "@ticketsbot/core";
  * Webhook client for sending events to the web application
  */
 
-export interface WebhookPayload<T = unknown> {
+export type WebhookPayload<T = unknown> = {
   event: string;
   timestamp: string;
   data: T;
-}
+};
 
-export interface GuildJoinedData {
+export type GuildJoinedData = {
   guildId: string;
   guildName: string;
   ownerId: string;
   memberCount: number;
-}
+};
 
-export interface GuildLeftData {
+export type GuildLeftData = {
   guildId: string;
-}
+};
 
-export interface SetupCompleteData {
+export type SetupCompleteData = {
   guildId: string;
   supportCategoryId?: string;
   transcriptsChannelId?: string;
   logChannelId?: string;
   defaultRoleId?: string;
-}
+};
 
 // Ticket Events
-export interface TicketMessageData {
+export type TicketMessageData = {
   guildId: string;
   ticketId: number;
   ticketNumber: number;
@@ -43,9 +43,9 @@ export interface TicketMessageData {
   messageType: "customer" | "staff" | "bot";
   hasAttachments: boolean;
   messageLength: number;
-}
+};
 
-export interface TicketStatusData {
+export type TicketStatusData = {
   guildId: string;
   ticketId: number;
   ticketNumber: number;
@@ -53,9 +53,9 @@ export interface TicketStatusData {
   newStatus: string;
   actorId: string;
   reason?: string;
-}
+};
 
-export interface TicketCreatedData {
+export type TicketCreatedData = {
   guildId: string;
   ticketId: number;
   ticketNumber: number;
@@ -64,9 +64,9 @@ export interface TicketCreatedData {
   openerUsername: string;
   panelId?: string;
   categoryId?: string;
-}
+};
 
-export interface TicketUpdatedData {
+export type TicketUpdatedData = {
   guildId: string;
   ticketId: number;
   ticketNumber: number;
@@ -76,42 +76,42 @@ export interface TicketUpdatedData {
     tags?: { added: string[]; removed: string[] };
   };
   actorId: string;
-}
+};
 
-export interface TicketDeletedData {
+export type TicketDeletedData = {
   guildId: string;
   ticketId: number;
   ticketNumber: number;
   deletedBy: string;
   reason?: string;
-}
+};
 
 // Team Events
-export interface TeamRoleData {
+export type TeamRoleData = {
   guildId: string;
   roleId: string;
   roleName: string;
   action: "created" | "updated" | "deleted";
   changes?: Record<string, any>;
-}
+};
 
-export interface TeamMemberData {
+export type TeamMemberData = {
   guildId: string;
   userId: string;
   username: string;
   roleId: string;
   roleName: string;
   action: "assigned" | "unassigned";
-}
+};
 
 // Member Events
-export interface MemberLeftData {
+export type MemberLeftData = {
   guildId: string;
   userId: string;
   username: string;
   hadOpenTickets: boolean;
   wasTeamMember: boolean;
-}
+};
 
 // Unified Bot Event Type
 export type BotEventType =
@@ -150,10 +150,10 @@ export type BotEvent =
   | { type: "team.member_unassigned"; data: TeamMemberData }
   | { type: "member.left"; data: MemberLeftData };
 
-export interface UnifiedWebhookPayload {
+export type UnifiedWebhookPayload = {
   event: BotEvent;
   timestamp: string;
-}
+};
 
 export class WebhookClient {
   private readonly baseUrl: string;
