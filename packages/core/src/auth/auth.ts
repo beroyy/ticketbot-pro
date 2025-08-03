@@ -58,16 +58,6 @@ getOrigins.logged = false;
 
 // No longer using Redis for secondary storage - database only
 
-type AuthInstance = {
-  handler: (request: Request) => Promise<Response>;
-  api: {
-    getSession: (params: { headers: Headers }) => Promise<unknown>;
-    [key: string]: unknown;
-  };
-  options?: Record<string, unknown>;
-  [key: string]: unknown;
-};
-
 const createAuthInstance = () => {
   const getEnvVar = (key: string, fallback?: string): string => {
     return process.env[key] || fallback || "";
@@ -129,6 +119,7 @@ const createAuthInstance = () => {
       discord: {
         clientId: discordClientId,
         clientSecret: discordClientSecret,
+        redirectURI: `${webOrigin}/api/auth/callback/discord`,
         scope: ["identify+email+guilds"],
         mapProfileToUser: (profile: any) => {
           logger.debug("Discord OAuth profile received:", {
@@ -462,20 +453,9 @@ const createAuthInstance = () => {
         }
       }),
     },
-  }) as AuthInstance;
+  });
 };
-
-let authInstance: AuthInstance | null = null;
-
-export const auth = new Proxy({} as AuthInstance, {
-  get(_target, prop) {
-    if (!authInstance) {
-      authInstance = createAuthInstance();
-    }
-    return authInstance[prop as keyof AuthInstance];
-  },
-});
 
 export { getSessionFromContext } from "./services/session";
 
-export default auth;
+export const auth = createAuthInstance();
