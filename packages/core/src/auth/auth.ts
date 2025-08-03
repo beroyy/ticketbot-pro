@@ -6,6 +6,7 @@ import { customSession } from "better-auth/plugins";
 import { prisma } from "../prisma";
 import { User as UserDomain, Account as AccountDomain } from "../domains";
 import { getDiscordAvatarUrl } from "./services/discord-api";
+import { getWebUrl, getApiUrl, getCookieDomain } from "../utils";
 import type { User, Session } from "./types";
 
 type AuthContext = {
@@ -43,15 +44,14 @@ function getEnvVar(key: string, fallback?: string): string {
 }
 
 const getOrigins = () => {
-  const webOrigin = getEnvVar("WEB_URL", "http://localhost:3000");
-  const apiOrigin = getEnvVar("API_URL", "http://localhost:3001");
+  const webOrigin = getWebUrl();
+  const apiOrigin = getApiUrl();
 
   if (!getOrigins.logged) {
     logger.info("Auth trusted origins:", {
       webOrigin,
       apiOrigin,
-      envWebUrl: process.env.WEB_URL,
-      envApiUrl: process.env.API_URL,
+      baseDomain: process.env.BASE_DOMAIN || "localhost",
     });
     getOrigins.logged = true;
   }
@@ -77,7 +77,7 @@ if (!discordClientId || !discordClientSecret) {
   });
 }
 
-interface AuthInstance {
+type AuthInstance = {
   handler: (request: Request) => Promise<Response>;
   api: {
     getSession: (params: { headers: Headers }) => Promise<unknown>;
@@ -85,10 +85,11 @@ interface AuthInstance {
   };
   options?: Record<string, unknown>;
   [key: string]: unknown;
-}
+};
 
 const createAuthInstance = () => {
   const { webOrigin, apiOrigin } = getOrigins();
+  const cookieDomain = getCookieDomain();
 
   logger.debug("Creating Better Auth instance", {
     baseURL: apiOrigin,
@@ -97,6 +98,7 @@ const createAuthInstance = () => {
     redirectURI: `${apiOrigin}/auth/callback/discord`,
     discordClientId: discordClientId?.substring(0, 6) + "...",
     nodeEnv: process.env["NODE_ENV"],
+    cookieDomain,
   });
 
   return betterAuth({
@@ -108,15 +110,14 @@ const createAuthInstance = () => {
       storeSessionInDatabase: true,
       cookieCache: {
         enabled: true,
-        maxAge: parseInt(process.env["COOKIE_CACHE_MAX_AGE"] || "300"),
+        maxAge: 300, // 5 minutes cache
       },
       expiresIn: 60 * 60 * 24 * 7,
     },
     rateLimit: {
-      enabled:
-        process.env["NODE_ENV"] === "production" || process.env["RATE_LIMIT_ENABLED"] === "true",
-      window: parseInt(process.env["RATE_LIMIT_WINDOW"] || "60"),
-      max: parseInt(process.env["RATE_LIMIT_MAX"] || "100"),
+      enabled: process.env["NODE_ENV"] === "production",
+      window: 60, // 60 seconds
+      max: 100, // 100 requests per window
       storage: "memory",
       customRules: {
         "/auth/signin": { window: 300, max: 5 },
@@ -135,7 +136,7 @@ const createAuthInstance = () => {
       useSecureCookies: process.env["NODE_ENV"] === "production",
       crossSubDomainCookies: {
         enabled: true,
-        domain: process.env["NODE_ENV"] === "production" ? ".ticketbot.pro" : "localhost",
+        domain: cookieDomain,
       },
       disableCSRFCheck: process.env["NODE_ENV"] === "development",
       cookies: {
@@ -145,7 +146,7 @@ const createAuthInstance = () => {
             sameSite: "lax",
             secure: process.env["NODE_ENV"] === "production",
             httpOnly: true,
-            domain: process.env["NODE_ENV"] === "production" ? ".ticketbot.pro" : "localhost",
+            domain: cookieDomain,
             path: "/",
           },
         },
@@ -155,7 +156,7 @@ const createAuthInstance = () => {
             sameSite: "lax",
             secure: true,
             httpOnly: true,
-            domain: process.env["NODE_ENV"] === "production" ? ".ticketbot.pro" : "localhost",
+            domain: cookieDomain,
             path: "/",
           },
         },

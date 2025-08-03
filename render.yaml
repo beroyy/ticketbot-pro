@@ -12,14 +12,12 @@ services:
     healthCheckPath: /health
     numInstances: 1
     dockerCommand: pnpm start:production
-
     buildFilter:
       paths:
         - apps/api/**
         - apps/bot/**
         - packages/core/**
         - packages/scripts/**
-
         - package.json
         - pnpm-lock.yaml
         - pnpm-workspace.yaml
@@ -27,25 +25,20 @@ services:
         - Dockerfile
         - render.yaml
         - .nvmrc
-
       ignoredPaths:
         - apps/web/**
-
         - "**/*.md"
         - docs/**
-
         - "**/*.test.ts"
         - "**/*.spec.ts"
         - "**/tests/**"
         - "**/__tests__/**"
-
         - .github/**
         - packages/eslint-config/**
         - packages/tsconfig/**
         - packages/vitest-config/**
         - .vscode/**
         - "**/.eslintrc*"
-
     envVars:
       - fromGroup: ticketsbot-env
       - key: NODE_ENV
@@ -56,7 +49,6 @@ services:
         value: .turbo
       - key: TURBO_LOG_ORDER
         value: stream
-
 envVarGroups:
   - name: ticketsbot-env
     envVars:
@@ -70,11 +62,7 @@ envVarGroups:
         value: ""
       - key: DISCORD_CLIENT_SECRET
         value: ""
-      - key: WEB_URL
-        value: ""
-      - key: API_URL
-        value: ""
-      - key: ALLOWED_ORIGINS
+      - key: BASE_DOMAIN
         value: ""
       - key: REDIS_URL
         value: ""

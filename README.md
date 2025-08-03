@@ -21,6 +21,7 @@ cp .env.example .env
 
 # Edit .env with your values
 # Required: DATABASE_URL, DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, DISCORD_TOKEN, BETTER_AUTH_SECRET
+# For production, also set: BASE_DOMAIN (e.g., ticketsbot.co)
 ```
 
 ### 2. Install & Start
@@ -60,8 +61,8 @@ pnpm dev --help
 
 ### What Gets Started
 
-- 🌐 **Web Dashboard** - http://localhost:3000
-- 🔌 **API Server** - http://localhost:3001
+- 🌐 **Web Dashboard** - http://localhost:9000
+- 🔌 **API Server** - http://localhost:9001
 - 🤖 **Discord Bot** - Connects using your token
 - 🐳 **Redis** - Automatically via Docker (port 6379)
 - 📦 **Database** - Initialized automatically if needed
@@ -84,7 +85,7 @@ The `pnpm dev` command intelligently:
    - `DISCORD_CLIENT_ID` - From "Application ID"
    - `DISCORD_CLIENT_SECRET` - From "OAuth2" section
    - `DISCORD_BOT_TOKEN` - From "Bot" section
-4. Set OAuth2 redirect URI: `http://localhost:3000/auth/callback/discord`
+4. Set OAuth2 redirect URI: `http://localhost:9001/auth/callback/discord`
 
 ### Database Setup
 
@@ -135,37 +136,35 @@ All applications validate their environment variables at startup using Zod schem
 ### Required Variables
 
 ```env
-# Core
+# Core Configuration (Required)
 NODE_ENV="development"              # development/production/test
-TURBO_ENV="dev"                    # dev/staging/prod
-DATABASE_URL="postgresql://..."    # PostgreSQL connection (auto-generated)
-DIRECT_URL="postgresql://..."      # Direct connection for migrations
+DATABASE_URL="postgresql://..."    # PostgreSQL connection
+BETTER_AUTH_SECRET="32+ char secret"  # Session encryption key
 
-# Port Configuration
-PORT_LEVEL=4                       # Base port level (4000, 4001, 4002)
-AUTO_PORT_DETECTION=true           # Automatically find available ports
-WEB_PORT=4000                      # Web dashboard port
-API_PORT=4001                      # API server port
-BOT_PORT=4002                      # Bot health check port
-
-# URLs (auto-calculated from PORT_LEVEL)
-WEB_URL="http://localhost:4000"
-API_URL="http://localhost:4001"
-NEXT_PUBLIC_API_URL="http://localhost:4001"
-DISCORD_REDIRECT_URI="http://localhost:4001/auth/callback/discord"
-
-# Discord (required)
+# Discord (Required)
 DISCORD_TOKEN="bot_token"
 DISCORD_CLIENT_ID="app_id"
 DISCORD_CLIENT_SECRET="app_secret"
 
-# Authentication
-BETTER_AUTH_SECRET="32+ char secret"  # Session encryption key
+# Production Domain (Required in production)
+BASE_DOMAIN="ticketsbot.co"        # Your production domain
 
-# Redis (optional)
-REDIS_URL="redis://localhost:4379"   # For caching/sessions
+# URLs (Automatically derived from BASE_DOMAIN)
+# In development:
+#   WEB_URL=http://localhost:9000
+#   API_URL=http://localhost:9001
+# In production:
+#   WEB_URL=https://app.ticketsbot.co
+#   API_URL=https://api.ticketsbot.co
 
-# Development Features (optional)
+# Custom Ports (Optional - for development)
+WEB_PORT=9000                      # Web dashboard port
+API_PORT=9001                      # API server port
+
+# Redis (Optional)
+REDIS_URL="redis://localhost:6379"   # For caching/sessions
+
+# Development Features (Optional)
 DEV_PERMISSIONS_HEX="0xfffffff"      # Grant all permissions in dev
 DEV_GUILD_ID="your_test_guild_id"    # Default guild for testing
 DEV_DB_AUTO_SEED="true"              # Auto-seed database on startup

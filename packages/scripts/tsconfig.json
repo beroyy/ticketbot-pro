@@ -1,6 +1,7 @@
 {
   "extends": "@ticketsbot/tsconfig/base.json",
   "compilerOptions": {
+    "baseUrl": "../..",
     "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": ".tsbuildinfo",
@@ -9,7 +10,13 @@
     "target": "ES2022",
     "lib": ["ES2022"],
     "allowJs": true,
-    "checkJs": false
+    "checkJs": false,
+    "paths": {
+      "@ticketsbot/core": ["packages/core/src/index.ts"],
+      "@ticketsbot/core/prisma": ["packages/core/src/prisma/index.ts"],
+      "@ticketsbot/core/domains": ["packages/core/src/domains/index.ts"],
+      "@ticketsbot/core/domains/*": ["packages/core/src/domains/*/index.ts"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.mjs"],
   "exclude": ["node_modules", "dist"]

@@ -213,6 +213,12 @@ export {
   createTicketChannelName,
   createTicketThreadName,
   validateEnvironmentVariables,
+  getWebUrl,
+  getApiUrl,
+  getCookieDomain,
+  getDiscordRedirectUri,
+  getAllUrls,
+  getDevPorts,
 } from "./utils";
 
 export {

@@ -1,8 +1,3 @@
-/**
- * Centralized logger utility for the TicketsBot monorepo.
- * Respects LOG_LEVEL environment variable for filtering output.
- */
-
 export type LogLevel = "error" | "warn" | "info" | "debug";
 
 const LOG_LEVELS: Record<LogLevel, number> = {
@@ -50,19 +45,14 @@ class Logger {
     }
   }
 
-  /**
-   * Creates a child logger with an additional prefix
-   */
   child(prefix: string): Logger {
     const combinedPrefix = this.prefix ? `${this.prefix.slice(0, -2)}:${prefix}` : prefix;
     return new Logger(combinedPrefix);
   }
 }
 
-// Create a default logger instance
 export const logger = new Logger();
 
-// Export factory function for creating named loggers
 export function createLogger(prefix: string): Logger {
   return new Logger(prefix);
 }

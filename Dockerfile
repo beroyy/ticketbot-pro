@@ -39,8 +39,8 @@ WORKDIR /app
 # (In future, could optimize to copy only needed files)
 COPY --from=builder /app .
 
-# Expose ports
-EXPOSE ${API_PORT:-3001} ${BOT_PORT:-3002}
+# Expose ports (fixed ports from development config)
+EXPOSE 9001 3002
 
 # Start services
 CMD ["pnpm", "start:production"]

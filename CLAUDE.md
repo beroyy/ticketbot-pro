@@ -196,7 +196,7 @@ pnpm build
 
 ## Environment Configuration
 
-The monorepo uses a **minimal environment variable approach** where most values are automatically derived:
+The monorepo uses a **minimal environment variable approach** where ALL URLs and ports are derived programmatically:
 
 ### Required Environment Variables (only 6!)
 
@@ -212,28 +212,54 @@ DISCORD_CLIENT_ID=123456789012345678
 DISCORD_CLIENT_SECRET=your-discord-secret
 ```
 
+### Production Configuration
+
+```env
+# Additional requirement for production
+BASE_DOMAIN=ticketsbot.co    # Your production domain
+```
+
 ### Optional Variables
 
 ```env
-# Base configuration
-BASE_DOMAIN=ticketsbot.dev    # Required for production
+# Redis
 REDIS_URL=redis://localhost:6379
 
-# Feature flags
+# Feature flags (must be prefixed with NEXT_PUBLIC_ for client-side access)
 NEXT_PUBLIC_FEATURE_NEW_TICKET_UI=true
 NEXT_PUBLIC_FEATURE_BULK_ACTIONS=false
 NEXT_PUBLIC_FEATURE_ADVANCED_FORMS=false
+
+# Development helpers
+DEV_PERMISSIONS_HEX=0xfffffff    # Grant all permissions in dev
+DEV_DB_AUTO_SEED=true            # Auto-seed database on startup
 ```
 
 ### Automatically Derived Values
 
-The system automatically derives these values:
+ALL URLs and ports are derived programmatically based on `NODE_ENV` and `BASE_DOMAIN`:
 
-- `WEB_URL`, `API_URL` - Based on NODE_ENV and BASE_DOMAIN
-- `LOG_LEVEL`, `LOG_REQUESTS` - Based on NODE_ENV
-- And many more...
+**Development (NODE_ENV=development)**:
 
-This reduces configuration from 23+ variables to just 6 required ones!
+- Web URL: `http://localhost:9000`
+- API URL: `http://localhost:9001`
+- Bot Port: `3002`
+- Cookie Domain: `localhost`
+
+**Production (NODE_ENV=production, BASE_DOMAIN=ticketsbot.co)**:
+
+- Web URL: `https://app.ticketsbot.co`
+- API URL: `https://api.ticketsbot.co`
+- Cookie Domain: `.ticketsbot.co`
+
+### Important Notes
+
+- **NO URL/PORT ENV VARS**: Never set `WEB_URL`, `API_URL`, `WEB_PORT`, `API_PORT`, etc.
+- **Fixed Ports**: Development ports are hardcoded (9000, 9001, 3002) for consistency
+- **Client-side Access**: For Next.js, use `NEXT_PUBLIC_BASE_DOMAIN` in client components
+- **URL Access**: Use `getWebUrl()`, `getApiUrl()` from `@ticketsbot/core` instead of env vars
+
+This reduces configuration from 23+ variables to just 6 required ones (7 in production)!
 
 ## Important Patterns & Considerations
 

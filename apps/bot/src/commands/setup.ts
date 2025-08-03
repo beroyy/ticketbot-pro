@@ -19,6 +19,7 @@ import {
   ensureWithDefaults as ensureGuildWithDefaults,
 } from "@ticketsbot/core/domains";
 import { parseDiscordId } from "@ticketsbot/core";
+import { getWebUrl } from "@ticketsbot/core";
 import { container } from "@sapphire/framework";
 import { RoleOps } from "@bot/lib/discord-operations/roles";
 import { ChannelOps } from "@bot/lib/discord-operations/channel";
@@ -506,7 +507,7 @@ const handlePanelsSetup = async (
     if (panels.length === 0) {
       await InteractionResponse.warning(
         interaction,
-        `You don't have any panels created yet.\n\nUse the **[web dashboard](${process.env.WEB_URL || "https://tickets.example.com"})** to create your first panel!`
+        `You don't have any panels created yet.\n\nUse the **[web dashboard](${getWebUrl()})** to create your first panel!`
       );
       return ok(undefined);
     }

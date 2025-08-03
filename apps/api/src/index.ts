@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { serve } from "@hono/node-server";
 import { auth } from "@ticketsbot/core/auth";
+import { getApiUrl, getWebUrl, getDevPorts } from "@ticketsbot/core";
 import type { AppEnv } from "./factory";
 import { errorHandler } from "./utils/error-handler";
 import { authRoutes } from "./routes/auth";
@@ -19,17 +20,18 @@ import { ticketRoutes } from "./routes/tickets";
 import { permissionRoutes } from "./routes/permissions";
 import { Redis } from "@ticketsbot/core";
 
-logger.debug("🔍 Validated Environment Variables:", {
-  WEB_URL: env.WEB_URL,
-  API_URL: env.API_URL,
-  API_PORT: env.API_PORT,
-  NEXT_PUBLIC_API_URL: env.NEXT_PUBLIC_API_URL ?? "not set",
+const webUrl = getWebUrl();
+const apiUrl = getApiUrl();
+const apiPort = getDevPorts().api;
+
+logger.debug("🔍 Derived URLs:", {
+  webUrl,
+  apiUrl,
+  apiPort,
 });
 
 const app = new Hono<AppEnv>().onError(errorHandler);
 
-const webUrl = env.WEB_URL;
-const apiUrl = env.API_URL;
 const allowedOrigins = [webUrl, apiUrl];
 
 logger.debug("🔒 CORS Configuration:", {
@@ -73,7 +75,6 @@ app.use(
 app.on(["POST", "GET"], "/auth/*", async (c) => {
   const response = await auth.handler(c.req.raw);
 
-  // Add CORS headers to auth response
   const origin = c.req.header("origin");
   if (origin && allowedOrigins.includes(origin)) {
     response.headers.set("Access-Control-Allow-Origin", origin);
@@ -100,7 +101,7 @@ const _routes = app
 
 export type AppType = typeof _routes;
 
-const port = process.env.PORT ? parseInt(process.env.PORT) : env.API_PORT;
+const port = process.env.PORT ? parseInt(process.env.PORT) : apiPort;
 const host = env.API_HOST;
 
 Redis.initialize()

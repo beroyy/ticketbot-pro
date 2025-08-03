@@ -1,9 +1,5 @@
 import { z } from "zod";
 
-/**
- * Discord ID validation and parsing utilities
- */
-
 export const DiscordIdSchemaV4 = z.string().regex(/^\d+$/, "Discord IDs must be numeric");
 
 export function parseDiscordIdV4(id: string): { success: boolean; data?: string; error?: any } {

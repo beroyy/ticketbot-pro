@@ -1,11 +1,9 @@
 import { getServerSession } from "@/lib/auth-server";
 import { botEvents, type SSEEvent } from "@/lib/sse/bot-events";
 import { getAccessibleGuilds } from "@ticketsbot/core/domains";
+import { getWebUrl } from "@ticketsbot/core";
 
-// Force dynamic to prevent static optimization
 export const dynamic = "force-dynamic";
-
-// Disable runtime edge to use Node.js EventEmitter
 export const runtime = "nodejs";
 
 /**
@@ -103,7 +101,7 @@ export async function GET(request: Request) {
       "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
       "X-Accel-Buffering": "no",
-      "Access-Control-Allow-Origin": process.env.WEB_URL || "*",
+      "Access-Control-Allow-Origin": getWebUrl(),
       "Access-Control-Allow-Credentials": "true",
     },
   });

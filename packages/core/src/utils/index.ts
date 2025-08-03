@@ -1,21 +1,18 @@
-// Shared utilities and constants
-
-export interface BotConfig {
+export type BotConfig = {
   discordToken: string;
   clientId: string;
   databaseUrl: string;
   environment: "development" | "production";
-}
+};
 
-export interface TicketEmbedOptions {
+export type TicketEmbedOptions = {
   title?: string;
   description?: string;
   color?: number;
   footer?: string;
   timestamp?: boolean;
-}
+};
 
-// Utility functions
 export function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -30,8 +27,10 @@ export function formatDuration(seconds: number): string {
   }
 }
 
+// TODO: which ones am I actually using?
+// export { parseDiscordId, formatDiscordId } from "./discord-id";
+
 export function parseDiscordId(id: string): string {
-  // Validate that the ID is numeric
   if (!/^\d+$/.test(id)) {
     throw new Error(`Invalid Discord ID format: "${id}". Discord IDs must be numeric.`);
   }
@@ -52,12 +51,10 @@ export function createTicketChannelName(
     return `${panelChannelPrefix}-${username.toLowerCase()}`;
   }
 
-  // Use guild ticket name format setting
   if (ticketNameFormat === "ticket-{username}") {
     return `ticket-${username.toLowerCase()}`;
   }
 
-  // Default to "ticket-{number}" pattern
   return `ticket-${ticketId.toString()}`;
 }
 
@@ -76,5 +73,15 @@ export function validateEnvironmentVariables(config: Partial<BotConfig>): BotCon
   return config as BotConfig;
 }
 
-// Export logger utilities
+export { PermissionUtils } from "./permissions";
+
+export {
+  getWebUrl,
+  getApiUrl,
+  getCookieDomain,
+  getDiscordRedirectUri,
+  getAllUrls,
+  getDevPorts,
+} from "./env-urls";
+
 export { logger, createLogger, type LogLevel } from "./logger";

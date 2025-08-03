@@ -9,26 +9,24 @@ import {
   checkPostgresConnection,
   checkDatabaseSchema,
   checkRedisConnection,
-} from "./check-services.js";
-import { initializeDatabase } from "../db/init-db.js";
-import { main as seedDatabase } from "../db/seeders/index.js";
+} from "./check-services";
+import { initializeDatabase } from "../db/init-db";
+import { main as seedDatabase } from "../db/seeders/index";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "../../../..");
 const envPath = path.join(rootDir, ".env");
 
-// Load environment variables from root .env file
 config({ path: envPath });
 
-// Parse command line flags
-interface Flags {
+type Flags = {
   help: boolean;
   seed: boolean;
   noRedis: boolean;
   skipChecks: boolean;
   reset: boolean;
-}
+};
 
 function parseFlags(args: string[]): Flags {
   return {
@@ -93,7 +91,6 @@ async function main() {
     process.exit(0);
   }
 
-  // Check .env exists
   if (!fs.existsSync(envPath)) {
     console.error("❌ No .env file found!");
     console.error("📋 Copy .env.example to .env and fill in your values:");
@@ -106,7 +103,6 @@ async function main() {
 
   try {
     if (!flags.skipChecks) {
-      // PostgreSQL checks
       console.log("🔍 Checking PostgreSQL connection...");
       const pgConnected = await checkPostgresConnection();
       if (!pgConnected) {
@@ -117,7 +113,6 @@ async function main() {
       }
       console.log("✅ PostgreSQL connected");
 
-      // Reset if requested
       if (flags.reset) {
         console.log("\n🔄 Resetting database...");
         try {
@@ -132,7 +127,6 @@ async function main() {
         }
       }
 
-      // Check database schema
       console.log("\n🔍 Checking database schema...");
       const schemaExists = await checkDatabaseSchema();
       if (!schemaExists) {
@@ -142,14 +136,12 @@ async function main() {
         console.log("✅ Database schema ready");
       }
 
-      // Redis checks
       if (!flags.noRedis) {
         console.log("\n🔍 Checking Redis...");
         const redisRunning = await checkRedisConnection();
         if (!redisRunning) {
           console.log("🐳 Starting Redis with Docker...");
           try {
-            // Check if Docker is available
             try {
               execSync("docker --version", { stdio: "ignore" });
             } catch {
@@ -163,7 +155,6 @@ async function main() {
               cwd: rootDir,
             });
 
-            // Wait for Redis to be ready
             const redisReady = await waitForService(checkRedisConnection, "Redis", 10, 1000);
             if (!redisReady) {
               console.warn("⚠️  Redis started but not responding. Some features may not work.");
@@ -181,7 +172,6 @@ async function main() {
         console.log("\n⚠️  Skipping Redis (--no-redis flag)");
       }
 
-      // Seed if requested
       if (flags.seed) {
         console.log("\n🌱 Seeding database with test data...");
         try {
@@ -198,7 +188,6 @@ async function main() {
       console.log("⚡ Skipping all checks (--skip-checks flag)");
     }
 
-    // Start all services
     console.log("\n🚀 Starting all services...\n");
     const turbo = spawn("turbo", ["run", "dev"], {
       cwd: rootDir,
@@ -206,12 +195,10 @@ async function main() {
       shell: true,
     });
 
-    // Handle graceful shutdown
     const shutdown = () => {
       console.log("\n🛑 Shutting down services...");
       turbo.kill("SIGTERM");
 
-      // Also stop Redis if we started it
       if (!flags.noRedis && !flags.skipChecks) {
         try {
           execSync("docker compose stop redis", {
@@ -240,7 +227,6 @@ async function main() {
   }
 }
 
-// Run the main function
 main().catch((error) => {
   console.error("Fatal error:", error);
   process.exit(1);

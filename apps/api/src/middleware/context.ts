@@ -102,10 +102,12 @@ export const withContext: MiddlewareHandler<{ Variables: Variables }> = async (c
           providerId: discordAccount?.providerId,
           hasAccessToken: !!discordAccount?.accessToken,
         });
-        
+
         if (discordAccount?.accountId) {
           effectiveDiscordUserId = discordAccount.accountId;
-          logger.info(`Using Discord ID from OAuth account for user ${session.user.id}: ${effectiveDiscordUserId}`);
+          logger.info(
+            `Using Discord ID from OAuth account for user ${session.user.id}: ${effectiveDiscordUserId}`
+          );
         } else {
           logger.warn("No Discord account found for user:", session.user.id);
         }

@@ -17,7 +17,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=http://localhost:3001
+        # Pass BASE_DOMAIN for client-side URL derivation
+        - NEXT_PUBLIC_BASE_DOMAIN=${BASE_DOMAIN:-localhost}
     env_file:
       - .env
     environment:
@@ -26,8 +27,8 @@ services:
       - REDIS_URL=redis://redis:6379
       - RUNNING_IN_DOCKER=true
     ports:
-      - "3000:3000"
-      - "3001:3001"
+      - "9000:9000"
+      - "9001:9001"
       - "3002:3002"
     volumes:
       # Development volumes
