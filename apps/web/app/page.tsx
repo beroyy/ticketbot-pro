@@ -1,5 +1,12 @@
-import Image from "next/image";
+import { redirect } from "next/navigation";
+import { getServerSession } from "@/lib/auth-server";
 
-export default function Home() {
-  return <div></div>;
+export default async function Home() {
+  const session = await getServerSession();
+
+  if (session) {
+    redirect("/guilds");
+  } else {
+    redirect("/login");
+  }
 }
