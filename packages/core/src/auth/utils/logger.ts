@@ -1,7 +1,3 @@
-/**
- * Logger for the auth package that respects environment log levels
- */
-
 export type LogLevel = "error" | "warn" | "info" | "debug";
 
 const logLevels: Record<LogLevel, number> = {
@@ -15,7 +11,6 @@ class AuthLogger {
   private level: LogLevel;
 
   constructor() {
-    // Default to 'info' in production, 'debug' in development
     const defaultLevel = process.env.NODE_ENV === "production" ? "info" : "debug";
     this.level = (process.env.LOG_LEVEL as LogLevel) || defaultLevel;
   }

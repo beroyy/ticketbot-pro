@@ -8,13 +8,13 @@ import { User as UserDomain, Account as AccountDomain } from "../domains";
 import { getDiscordAvatarUrl } from "./services/discord-api";
 import type { User, Session } from "./types";
 
-interface AuthContext {
+type AuthContext = {
   newSession?: {
     user: User;
     session: Session;
   };
   user?: User;
-}
+};
 
 type SessionData = {
   user: {
@@ -135,7 +135,7 @@ const createAuthInstance = () => {
       useSecureCookies: process.env["NODE_ENV"] === "production",
       crossSubDomainCookies: {
         enabled: true,
-        domain: process.env["NODE_ENV"] === "production" ? ".ticketsbot.co" : "localhost",
+        domain: process.env["NODE_ENV"] === "production" ? ".ticketbot.pro" : "localhost",
       },
       disableCSRFCheck: process.env["NODE_ENV"] === "development",
       cookies: {
@@ -145,7 +145,7 @@ const createAuthInstance = () => {
             sameSite: "lax",
             secure: process.env["NODE_ENV"] === "production",
             httpOnly: true,
-            domain: process.env["NODE_ENV"] === "production" ? ".ticketsbot.co" : "localhost",
+            domain: process.env["NODE_ENV"] === "production" ? ".ticketbot.pro" : "localhost",
             path: "/",
           },
         },
@@ -155,7 +155,7 @@ const createAuthInstance = () => {
             sameSite: "lax",
             secure: true,
             httpOnly: true,
-            domain: process.env["NODE_ENV"] === "production" ? ".ticketsbot.co" : "localhost",
+            domain: process.env["NODE_ENV"] === "production" ? ".ticketbot.pro" : "localhost",
             path: "/",
           },
         },
@@ -179,13 +179,8 @@ const createAuthInstance = () => {
             discriminator: profile.discriminator,
             hasAvatar: !!profile.avatar,
           });
-
-          // Return mapped user data that will be stored
-          // Note: discordUserId is NOT set here to avoid foreign key constraint
-          // It will be linked after the DiscordUser is created in the callback hook
           return {
-            name: profile.username, // Update the display name
-            email: profile.email || `${profile.id}@discord.local`, // Fallback email
+            name: profile.username,
           };
         },
       },
@@ -426,10 +421,11 @@ const createAuthInstance = () => {
                   owner: guild.owner || false,
                   permissions: guild.permissions || "0",
                   features: guild.features || [],
-                  isAdmin: guild.owner || 
-                           (guild.permissions ? 
-                            (BigInt(guild.permissions) & MANAGE_GUILD) === MANAGE_GUILD : 
-                            false),
+                  isAdmin:
+                    guild.owner ||
+                    (guild.permissions
+                      ? (BigInt(guild.permissions) & MANAGE_GUILD) === MANAGE_GUILD
+                      : false),
                 }));
 
                 // Cache all guilds in DiscordUser
@@ -445,7 +441,7 @@ const createAuthInstance = () => {
 
                 logger.debug(`Cached ${guilds.length} guilds for user during OAuth`, {
                   totalGuilds: guilds.length,
-                  adminGuilds: guildsWithAdminStatus.filter(g => g.isAdmin).length,
+                  adminGuilds: guildsWithAdminStatus.filter((g) => g.isAdmin).length,
                   discordUserId: account.accountId,
                 });
 
@@ -456,25 +452,27 @@ const createAuthInstance = () => {
                 const roleModule = await import("../domains/role");
                 const Role = roleModule.Role;
 
-                const adminGuilds = guildsWithAdminStatus.filter(g => g.isAdmin);
-                
+                const adminGuilds = guildsWithAdminStatus.filter((g) => g.isAdmin);
+
                 for (const guild of adminGuilds) {
                   try {
                     // Check if bot is in this guild
                     const dbGuild = await findGuildById(guild.id);
-                    
+
                     if (dbGuild?.botInstalled) {
-                      logger.debug(`Bot is installed in guild ${guild.id}, setting up ownership and roles`);
-                      
+                      logger.debug(
+                        `Bot is installed in guild ${guild.id}, setting up ownership and roles`
+                      );
+
                       // Update ownership if they own it
                       if (guild.owner && dbGuild.ownerDiscordId !== account.accountId) {
                         await ensureGuild(guild.id, guild.name, account.accountId);
                         logger.debug(`Updated ownership for guild ${guild.id}`);
                       }
-                      
+
                       // Ensure default roles exist
                       await Role.ensureDefaultRoles(guild.id);
-                      
+
                       // Assign appropriate role
                       if (guild.owner) {
                         const adminRole = await Role.getRoleByName(guild.id, "admin");
