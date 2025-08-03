@@ -68,8 +68,8 @@ const createAuthInstance = () => {
     logger.error("BETTER_AUTH_SECRET is not set! Sessions will not work properly.");
   }
 
-  const discordClientId = getEnvVar("DISCORD_CLIENT_ID");
-  const discordClientSecret = getEnvVar("DISCORD_CLIENT_SECRET");
+  const discordClientId = getEnvVar("NEXT_PUBLIC_DISCORD_CLIENT_ID");
+  const discordClientSecret = getEnvVar("NEXT_PUBLIC_DISCORD_CLIENT_SECRET");
 
   if (!discordClientId || !discordClientSecret) {
     logger.warn("Discord OAuth credentials not set. OAuth login will not work.", {
@@ -121,7 +121,7 @@ const createAuthInstance = () => {
         clientSecret: discordClientSecret,
         scope: ["guilds"],
         redirectURI: isProduction()
-          ? `https://www.${process.env.BASE_DOMAIN || "localhost"}/api/auth/callback/discord`
+          ? `https://www.${process.env.BASE_DOMAIN}/api/auth/callback/discord`
           : "http://localhost:3000/api/auth/callback/discord",
         mapProfileToUser: (profile: any) => {
           logger.debug("Discord OAuth profile received:", {
