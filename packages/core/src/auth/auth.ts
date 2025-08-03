@@ -129,7 +129,7 @@ const createAuthInstance = () => {
       discord: {
         clientId: discordClientId,
         clientSecret: discordClientSecret,
-        scope: ["guilds"],
+        scope: ["identify+email+guilds"],
         mapProfileToUser: (profile: any) => {
           logger.debug("Discord OAuth profile received:", {
             id: profile.id,
