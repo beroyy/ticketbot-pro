@@ -39,10 +39,6 @@ type SessionData = {
   };
 };
 
-function getEnvVar(key: string, fallback?: string): string {
-  return process.env[key] || fallback || "";
-}
-
 const getOrigins = () => {
   const webOrigin = getWebUrl();
   const apiOrigin = getApiUrl();
@@ -62,21 +58,6 @@ getOrigins.logged = false;
 
 // No longer using Redis for secondary storage - database only
 
-const authSecret = getEnvVar("BETTER_AUTH_SECRET");
-if (!authSecret) {
-  logger.error("BETTER_AUTH_SECRET is not set! Sessions will not work properly.");
-}
-
-const discordClientId = getEnvVar("DISCORD_CLIENT_ID");
-const discordClientSecret = getEnvVar("DISCORD_CLIENT_SECRET");
-
-if (!discordClientId || !discordClientSecret) {
-  logger.warn("Discord OAuth credentials not set. OAuth login will not work.", {
-    clientIdSet: !!discordClientId,
-    clientSecretSet: !!discordClientSecret,
-  });
-}
-
 type AuthInstance = {
   handler: (request: Request) => Promise<Response>;
   api: {
@@ -88,6 +69,25 @@ type AuthInstance = {
 };
 
 const createAuthInstance = () => {
+  const getEnvVar = (key: string, fallback?: string): string => {
+    return process.env[key] || fallback || "";
+  };
+
+  const authSecret = getEnvVar("BETTER_AUTH_SECRET");
+  if (!authSecret) {
+    logger.error("BETTER_AUTH_SECRET is not set! Sessions will not work properly.");
+  }
+
+  const discordClientId = getEnvVar("DISCORD_CLIENT_ID");
+  const discordClientSecret = getEnvVar("DISCORD_CLIENT_SECRET");
+
+  if (!discordClientId || !discordClientSecret) {
+    logger.warn("Discord OAuth credentials not set. OAuth login will not work.", {
+      clientIdSet: !!discordClientId,
+      clientSecretSet: !!discordClientSecret,
+    });
+  }
+
   const { webOrigin, apiOrigin } = getOrigins();
   const cookieDomain = getCookieDomain();
 
@@ -497,7 +497,7 @@ const createAuthInstance = () => {
 let authInstance: AuthInstance | null = null;
 
 export const auth = new Proxy({} as AuthInstance, {
-  get(target, prop) {
+  get(_target, prop) {
     if (!authInstance) {
       authInstance = createAuthInstance();
     }
