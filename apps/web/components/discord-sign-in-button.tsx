@@ -1,20 +1,68 @@
 "use client";
 
-// import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { FaDiscord } from "react-icons/fa6";
 
 export function DiscordSignInButton() {
   const handleSignIn = async () => {
-    const redirectUri =
-      process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI ||
-      "http://localhost:3000/api/auth/callback/discord";
-    window.location.href = redirectUri;
+    // Use better-auth's method to ensure proper state management
+    // but intercept the redirect to fix the URL encoding issue
 
-    const state =
-      Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    // Store the original window.location.assign method
+    const originalAssign = window.location.assign;
+    const originalHref = Object.getOwnPropertyDescriptor(window.location, "href");
 
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("oauth_state", state);
+    // Override to fix the URL before redirect
+    window.location.assign = function (url) {
+      // Fix the malformed scope parameter
+      const fixedUrl = url.toString().replace(/scope=([^&]+)/, (match: string, scopes: string) => {
+        // If scopes contain unencoded spaces, fix them
+        if (scopes.includes(" ")) {
+          return "scope=" + scopes.replace(/ /g, "+");
+        }
+        return match;
+      });
+
+      console.log("Original URL:", url);
+      console.log("Fixed URL:", fixedUrl);
+
+      // Restore original method and redirect
+      window.location.assign = originalAssign;
+      originalAssign.call(window.location, fixedUrl);
+    };
+
+    // Also override href setter
+    Object.defineProperty(window.location, "href", {
+      set: function (url) {
+        const fixedUrl = url
+          .toString()
+          .replace(/scope=([^&]+)/, (match: string, scopes: string) => {
+            if (scopes.includes(" ")) {
+              return "scope=" + scopes.replace(/ /g, "+");
+            }
+            return match;
+          });
+
+        console.log("Original href:", url);
+        console.log("Fixed href:", fixedUrl);
+
+        // Restore original property and set
+        Object.defineProperty(window.location, "href", originalHref!);
+        window.location.href = fixedUrl;
+      },
+      get: originalHref!.get,
+      configurable: true,
+    });
+
+    try {
+      await authClient.signIn.social({
+        provider: "discord",
+        callbackURL: "/guilds",
+      });
+    } finally {
+      // Restore original methods in case the promise rejects
+      window.location.assign = originalAssign;
+      Object.defineProperty(window.location, "href", originalHref!);
     }
   };
 
