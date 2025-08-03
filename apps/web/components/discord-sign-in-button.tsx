@@ -1,14 +1,12 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
 import { FaDiscord } from "react-icons/fa6";
 
 export function DiscordSignInButton() {
-  const handleSignIn = async () => {
-    await authClient.signIn.social({
-      provider: "discord",
-      callbackURL: typeof window !== "undefined" ? `${window.location.origin}/guilds` : undefined,
-    });
+  const handleSignIn = () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+    const callbackURL = encodeURIComponent(`${window.location.origin}/guilds`);
+    window.location.href = `${apiUrl}/auth/signin/discord?callbackURL=${callbackURL}`;
   };
 
   return (
