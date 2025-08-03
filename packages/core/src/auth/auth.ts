@@ -6,7 +6,7 @@ import { customSession } from "better-auth/plugins";
 import { prisma } from "../prisma";
 import { User as UserDomain, Account as AccountDomain } from "../domains";
 import { getDiscordAvatarUrl } from "./services/discord-api";
-import { getWebUrl, getApiUrl, getCookieDomain } from "../utils";
+import { getWebUrl, getApiUrl, isProduction } from "../utils";
 import type { User, Session } from "./types";
 
 type AuthContext = {
@@ -89,7 +89,7 @@ const createAuthInstance = () => {
   }
 
   const { webOrigin, apiOrigin } = getOrigins();
-  const cookieDomain = getCookieDomain();
+  const cookieDomain = isProduction() ? `.${process.env.BASE_DOMAIN}` : "localhost";
 
   logger.debug("Creating Better Auth instance", {
     baseURL: apiOrigin,
@@ -119,7 +119,7 @@ const createAuthInstance = () => {
     trustedOrigins: [webOrigin, apiOrigin],
     advanced: {
       cookiePrefix: "ticketsbot",
-      useSecureCookies: process.env["NODE_ENV"] === "production",
+      useSecureCookies: isProduction(),
       crossSubDomainCookies: {
         enabled: true,
         domain: cookieDomain,

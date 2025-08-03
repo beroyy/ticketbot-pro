@@ -75,13 +75,8 @@ export function validateEnvironmentVariables(config: Partial<BotConfig>): BotCon
 
 export { PermissionUtils } from "./permissions";
 
-export {
-  getWebUrl,
-  getApiUrl,
-  getCookieDomain,
-  getDiscordRedirectUri,
-  getAllUrls,
-  getDevPorts,
-} from "./env-urls";
+export { getWebUrl, getApiUrl, getDiscordRedirectUri, getAllUrls, getDevPorts } from "./env-urls";
 
 export { logger, createLogger, type LogLevel } from "./logger";
+
+export const isProduction = () => process.env.NODE_ENV === "production";

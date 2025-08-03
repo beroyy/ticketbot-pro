@@ -215,10 +215,10 @@ export {
   validateEnvironmentVariables,
   getWebUrl,
   getApiUrl,
-  getCookieDomain,
   getDiscordRedirectUri,
   getAllUrls,
   getDevPorts,
+  isProduction,
 } from "./utils";
 
 export {

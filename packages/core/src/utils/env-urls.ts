@@ -31,16 +31,16 @@ export function getApiUrl(): string {
   return `http://localhost:${DEV_PORTS.api}`;
 }
 
-export function getCookieDomain(): string {
-  const baseDomain = getBaseDomain();
-  const isProduction = process.env.NODE_ENV === "production";
+// export function getCookieDomain(): string {
+//   const baseDomain = getBaseDomain();
+//   const isProduction = process.env.NODE_ENV === "production";
 
-  if (isProduction) {
-    return `.${baseDomain}`;
-  }
+//   if (isProduction) {
+//     return `.${baseDomain}`;
+//   }
 
-  return "localhost";
-}
+//   return "localhost";
+// }
 
 export function getDiscordRedirectUri(): string {
   return `${getApiUrl()}/auth/callback/discord`;
@@ -51,7 +51,6 @@ export function getAllUrls() {
     baseDomain: getBaseDomain(),
     webUrl: getWebUrl(),
     apiUrl: getApiUrl(),
-    cookieDomain: getCookieDomain(),
     discordRedirectUri: getDiscordRedirectUri(),
   };
 }
