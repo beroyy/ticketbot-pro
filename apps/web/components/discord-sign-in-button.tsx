@@ -5,9 +5,7 @@ import { FaDiscord } from "react-icons/fa6";
 
 export function DiscordSignInButton() {
   const handleSignIn = async () => {
-    // Custom OAuth URL construction to work around better-auth scope encoding bug
-    const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || "1397412199869186090";
-    const redirectUri = `https://discord.com/oauth2/authorize?client_id=1397414095753318522&response_type=code&redirect_uri=https%3A%2F%2Fticketbot.pro%2Fapi%2Fauth%2Fcallback%2Fdiscord&scope=guilds+email+identify`;
+    const redirectUri = `https://discord.com/oauth2/authorize?client_id=1397412199869186090&response_type=code&redirect_uri=https%3A%2F%2Fticketbot.pro%2Fapi%2Fapi%2Fauth%2Fcallback%2Fdiscord&scope=identify+email+guilds`;
     window.location.href = redirectUri;
   };
   // : "http://localhost:3000/api/auth/callback/discord"
