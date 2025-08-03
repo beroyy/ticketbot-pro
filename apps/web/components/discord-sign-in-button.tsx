@@ -1,11 +1,13 @@
 "use client";
 
 import { FaDiscord } from "react-icons/fa6";
+import { authClient } from "@/lib/auth-client";
 
 export function DiscordSignInButton() {
   const handleSignIn = () => {
-    // Navigate to our proxy endpoint that fixes OAuth URLs
-    window.location.href = "/api/auth/oauth/discord";
+    authClient.signIn.social({
+      provider: "discord",
+    });
   };
 
   return (
