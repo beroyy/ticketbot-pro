@@ -118,33 +118,7 @@ const createAuthInstance = () => {
     advanced: {
       cookiePrefix: "ticketsbot",
       useSecureCookies: isProduction(),
-      crossSubDomainCookies: {
-        enabled: true,
-        domain: cookieDomain,
-      },
       disableCSRFCheck: !isProduction(),
-      cookies: {
-        session_token: {
-          name: "session_token",
-          attributes: {
-            sameSite: "lax",
-            secure: isProduction(),
-            httpOnly: true,
-            domain: cookieDomain,
-            path: "/",
-          },
-        },
-        session_data: {
-          name: "session_data",
-          attributes: {
-            sameSite: "lax",
-            secure: true,
-            httpOnly: true,
-            domain: cookieDomain,
-            path: "/",
-          },
-        },
-      },
     },
     account: {
       accountLinking: {
