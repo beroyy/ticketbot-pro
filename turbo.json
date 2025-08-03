@@ -20,6 +20,7 @@
         "DISCORD_CLIENT_ID",
         "DISCORD_CLIENT_SECRET",
         "DISCORD_TOKEN",
+        "BOT_WEBHOOK_SECRET",
         "WEB_URL",
         "WEB_PORT",
         "API_URL",
@@ -40,6 +41,7 @@
         "REDIS_URL",
         "BETTER_AUTH_SECRET",
         "DISCORD_*",
+        "BOT_WEBHOOK_SECRET",
         "NEXT_PUBLIC_*",
         "API_URL",
         "API_HOST",
@@ -65,6 +67,7 @@
         "REDIS_URL",
         "BETTER_AUTH_SECRET",
         "DISCORD_*",
+        "BOT_WEBHOOK_SECRET",
         "NEXT_PUBLIC_*",
         "API_URL",
         "API_HOST",
@@ -82,7 +85,7 @@
       "dependsOn": ["^lint"],
       "inputs": ["src/**", "eslint.config.*", ".eslintrc.*"],
       "outputs": [],
-      "env": ["NEXT_PHASE", "NEXT_TELEMETRY_DISABLED", "POSTHOG_API_KEY"]
+      "env": ["NEXT_PHASE", "NEXT_TELEMETRY_DISABLED", "POSTHOG_API_KEY", "BOT_WEBHOOK_SECRET"]
     },
     "typecheck": {
       "dependsOn": ["^build", "@ticketsbot/core#db:generate"],

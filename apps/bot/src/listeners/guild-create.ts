@@ -3,6 +3,7 @@ import { container } from "@sapphire/framework";
 import type { Guild } from "discord.js";
 import { ensure as ensureGuild, update as updateGuild, User, Role } from "@ticketsbot/core/domains";
 import { parseDiscordId } from "@ticketsbot/core";
+import { getWebhookClient } from "@bot/lib/webhook-client";
 
 export const GuildCreateListener = ListenerFactory.on("guildCreate", async (guild: Guild) => {
   const { logger } = container;
@@ -44,6 +45,17 @@ export const GuildCreateListener = ListenerFactory.on("guildCreate", async (guil
     logger.info(
       `✅ Completed setup for guild ${guild.name} - owner ${owner.user.tag} now has admin permissions`
     );
+
+    // 6. Send webhook notification
+    const webhookClient = getWebhookClient();
+    if (webhookClient) {
+      await webhookClient.sendGuildJoined({
+        guildId: parseDiscordId(guild.id),
+        guildName: guild.name,
+        ownerId: parseDiscordId(guild.ownerId),
+        memberCount: guild.memberCount,
+      });
+    }
   } catch (error) {
     logger.error(`❌ Failed to complete setup for guild ${guild.name}:`, error);
   }

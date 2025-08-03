@@ -35,7 +35,7 @@ This document outlines the complete migration plan from Pages Router to App Rout
 #### 1.1 Server-Side Auth Utilities (`lib/auth-server.ts`) ✅
 - [x] `getServerSession()` - Get session using better-auth's server API with cookie headers
 - [x] `requireAuth()` - Get session or throw error for use in pages/layouts
-- [x] `getUserWithGuilds()` - Get user with cached Discord guilds data
+- [x] `getUserWithGuilds()` - Get user with cached Discord guilds data + bot installation status
 - [x] Direct database/Redis access for session validation
 
 #### 1.2 Guild Context Helpers (`lib/guild-context.ts`) ✅
@@ -59,50 +59,65 @@ This document outlines the complete migration plan from Pages Router to App Rout
       /tickets/page.tsx          # Updated tickets page
 ```
 
-### Phase 2: Server Component Permission Guards
+### Phase 2: Server Component Permission Guards ✅
 
-#### 2.1 Guild Layout with Permissions
+#### 2.1 Guild Layout with Permissions ✅
 ```typescript
 // app/(guild)/g/[guildId]/layout.tsx
-- [ ] Fetch user session
-- [ ] Get user permissions for guild
-- [ ] Provide guild context to children
-- [ ] Handle missing permissions
+- [x] Fetch user session
+- [x] Get user permissions for guild
+- [x] Provide guild context to children
+- [x] Handle missing permissions
 ```
 
-#### 2.2 Permission Guard Components
-- [ ] `components/guards/RequirePermission.tsx` - Server component permission wrapper
-- [ ] `components/guards/WithPermission.tsx` - Conditional rendering based on permissions
-- [ ] Permission denied error boundary
+#### 2.2 Permission Guard Components ✅
+- [x] `components/guards/RequirePermission.tsx` - Server component permission wrapper
+- [x] `components/guards/WithPermission.tsx` - Conditional rendering based on permissions
+- [x] `components/guards/PermissionError.tsx` - Permission denied error component
+- [x] `lib/permissions-server.ts` - Server-side permission utilities
 
-### Phase 3: Navigation Components
+### Phase 3: Navigation Components ✅
 
-#### 3.1 Server-Side Navbar (`components/navbar.tsx`)
-- [ ] Convert to server component
-- [ ] Read guild context from params
-- [ ] Filter navigation items by permissions
-- [ ] Include guild switcher dropdown
+#### 3.1 Server-Side Navbar (`components/navbar.tsx`) ✅
+- [x] Convert to server component
+- [x] Read guild context from params
+- [x] Filter navigation items by permissions
+- [x] Include guild switcher dropdown
+- [x] Active state styling via client-side NavItems component
+- [x] Mobile menu integration with responsive design
 
-#### 3.2 Guild Switcher (`components/guild-switcher.tsx`)
-- [ ] Client component for interactivity
-- [ ] Display current guild
-- [ ] List available guilds with bot status
-- [ ] Handle guild switching (update cookie + navigate)
+#### 3.2 Guild Switcher (`components/guild-switcher.tsx`) ✅
+- [x] Client component for interactivity
+- [x] Display current guild with avatar
+- [x] List available guilds with bot installation status
+- [x] Handle guild switching (update cookie + navigate)
+- [x] Visual indicators for bot installation (green bot icon)
+- [x] Separate sections: "Your Servers", "Other Servers", "Install Bot"
+- [x] Loading spinner while switching guilds
+- [x] Search functionality for users with >5 guilds
+- [x] "Install Bot" action with Discord OAuth redirect
+
+#### 3.3 Mobile Navigation (`components/mobile-menu.tsx`) ✅
+- [x] Responsive hamburger menu for mobile devices
+- [x] Slide-out drawer with navigation items
+- [x] Guild info display with switch server link
+- [x] Active state highlighting
+- [x] Backdrop overlay when menu is open
 
 ### Phase 4: Onboarding & Bot Integration
 
-#### 4.1 Login Page (`app/(public)/login/page.tsx`)
-- [ ] Server component with auth check
-- [ ] Discord OAuth sign-in button
-- [ ] Auto-redirect if already authenticated
-- [ ] Clean, no client-side effects
+#### 4.1 Login Page (`app/(public)/login/page.tsx`) ✅
+- [x] Server component with auth check
+- [x] Discord OAuth sign-in button
+- [x] Auto-redirect if already authenticated
+- [x] Clean, no client-side effects
 
-#### 4.2 Guild Selection Page (`app/(guild-select)/guilds/page.tsx`)
-- [ ] List user's Discord guilds
-- [ ] Show bot installation status
-- [ ] "Install Bot" action for guilds without bot
-- [ ] "Select Guild" for guilds with bot
-- [ ] Server Action for status refresh
+#### 4.2 Guild Selection Page (`app/(authenticated)/guilds/page.tsx`) ✅
+- [x] List user's Discord guilds
+- [x] Show bot installation status
+- [x] "Install Bot" action for guilds without bot
+- [x] "Select Guild" for guilds with bot
+- [x] Server Action for guild selection (setSelectedGuild)
 
 #### 4.3 Webhook Endpoints
 - [ ] `/api/webhooks/bot/guild-joined/route.ts`
@@ -124,11 +139,11 @@ This document outlines the complete migration plan from Pages Router to App Rout
 - [x] Remove guild selection from queries (use context)
 - [x] Update API client to include guild context
 
-#### 5.2 Implement Dashboard
-- [ ] Create dashboard at `/g/[guildId]/dashboard`
-- [ ] Server-side data fetching
-- [ ] Permission-based widget visibility
-- [ ] Analytics and stats display
+#### 5.2 Implement Dashboard ⚠️ (Partially Complete)
+- [x] Create dashboard at `/g/[guildId]/dashboard`
+- [x] Server-side data fetching
+- [x] Permission-based widget visibility
+- [ ] Analytics and stats display (placeholders only)
 
 ## Key Implementation Patterns
 
@@ -213,10 +228,10 @@ The minor trade-off (no auth check until route render begins) is acceptable for 
 ## Migration Checklist
 
 - [x] Phase 1: Core auth and routing ✅
-- [ ] Phase 2: Permission guards
-- [ ] Phase 3: Navigation components
-- [ ] Phase 4: Onboarding flow
-- [ ] Phase 5: Feature migration (Tickets ✅)
+- [x] Phase 2: Permission guards ✅
+- [x] Phase 3: Navigation components ✅
+- [x] Phase 4: Onboarding flow (4.1 & 4.2 complete, 4.3 & 4.4 pending)
+- [x] Phase 5: Feature migration (Tickets ✅, Dashboard ⚠️)
 - [ ] Testing: End-to-end user flows
 - [ ] Cleanup: Remove legacy code
 
@@ -230,13 +245,62 @@ DISCORD_CLIENT_SECRET=...
 
 # New
 BOT_WEBHOOK_SECRET=<shared-secret-with-bot>
+NEXT_PUBLIC_DISCORD_CLIENT_ID=<discord-app-client-id> # For bot installation
 ```
+
+## Additional Features Implemented
+
+Beyond the original migration plan, several enhancements were added:
+
+### Enhanced Guild Switcher
+- **Search Functionality**: Filter guilds when user has more than 5 servers
+- **Categorized Display**: Three sections - "Your Servers", "Other Servers", "Install Bot"
+- **Visual Indicators**: Green bot icon for installed guilds
+- **Loading States**: Spinner during guild switching
+- **Smooth Transitions**: Optimistic updates with proper error handling
+
+### Mobile-First Navigation
+- **Responsive Design**: Hamburger menu for mobile devices
+- **Slide-Out Drawer**: Full navigation in mobile view
+- **Backdrop Overlay**: Proper mobile UX with dismissible menu
+- **Touch Optimized**: Large tap targets and smooth animations
+
+### User Experience Improvements
+- **User Menu**: Profile dropdown with sign-out functionality
+- **Stable Avatars**: Consistent avatar display with loading states
+- **Permission Errors**: Graceful handling of permission failures
+- **Active State Management**: Visual indicators for current page
+
+### Developer Experience
+- **Server Utilities**: Comprehensive permission checking helpers
+- **Type Safety**: Full TypeScript coverage with proper types
+- **Error Boundaries**: Graceful error handling throughout
+
+## Implementation Details for New Components
+
+### `components/guards/RequirePermission.tsx`
+Server component that wraps content requiring specific permissions. Redirects to dashboard with error message if permission check fails.
+
+### `components/guards/WithPermission.tsx`
+Conditionally renders children based on permission check. Shows fallback content or nothing if permissions are insufficient.
+
+### `components/stable-avatar.tsx`
+Prevents avatar flicker during navigation by maintaining consistent rendering. Handles both user and guild avatars with proper fallbacks.
+
+### `components/user-menu.tsx`
+Dropdown menu showing user info with sign-out functionality. Integrates with better-auth for session management.
+
+### `lib/permissions-server.ts`
+Server-side utilities for checking user permissions within guild context. Includes helpers for common permission patterns.
 
 ## Next Steps
 
-1. Phase 1 is complete ✅ - proceed to Phase 2 (Permission Guards)
-2. Implement server component permission wrappers
-3. Add navigation components with guild switcher
-4. Continue with remaining phases
+1. Phase 1-3 are complete ✅
+2. Phase 4.1 & 4.2 are complete ✅
+3. Focus on remaining Phase 4 items:
+   - 4.3: Webhook Endpoints
+   - 4.4: Bot Integration
+4. Complete Phase 5.2: Full analytics implementation
+5. Begin testing and cleanup phases
 
-This migration will result in a much cleaner, more maintainable codebase that fully leverages Next.js App Router's capabilities.
+This migration has successfully modernized the application with server-side rendering, improved performance, and enhanced user experience.

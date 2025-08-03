@@ -3,6 +3,7 @@ import { container } from "@sapphire/framework";
 import type { Guild } from "discord.js";
 import { parseDiscordId } from "@ticketsbot/core";
 import { update as updateGuild } from "@ticketsbot/core/domains";
+import { getWebhookClient } from "@bot/lib/webhook-client";
 
 export const GuildDeleteListener = ListenerFactory.on("guildDelete", async (guild: Guild) => {
   const { logger } = container;
@@ -14,6 +15,14 @@ export const GuildDeleteListener = ListenerFactory.on("guildDelete", async (guil
     await updateGuild(guildId, { botInstalled: false });
     
     logger.info(`✅ Updated guild ${guild.name} with botInstalled = false`);
+
+    // Send webhook notification
+    const webhookClient = getWebhookClient();
+    if (webhookClient) {
+      await webhookClient.sendGuildLeft({
+        guildId: guildId,
+      });
+    }
 
     // Log the removal
     logger.info(

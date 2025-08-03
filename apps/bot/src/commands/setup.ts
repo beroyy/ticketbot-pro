@@ -22,6 +22,7 @@ import { parseDiscordId } from "@ticketsbot/core";
 import { container } from "@sapphire/framework";
 import { RoleOps } from "@bot/lib/discord-operations/roles";
 import { ChannelOps } from "@bot/lib/discord-operations/channel";
+import { getWebhookClient } from "@bot/lib/webhook-client";
 import {
   ChannelType,
   PermissionFlagsBits,
@@ -370,6 +371,17 @@ Do you want to proceed?`
       } catch (error) {
         container.logger.warn("Failed to clear caches after setup:", error);
       }
+    }
+
+    // Send webhook notification
+    const webhookClient = getWebhookClient();
+    if (webhookClient) {
+      await webhookClient.sendSetupComplete({
+        guildId,
+        supportCategoryId: parseDiscordId(supportCategory.id),
+        transcriptsChannelId: parseDiscordId(transcriptChannel.id),
+        defaultRoleId: parseDiscordId(supportRole.id),
+      });
     }
 
     const successEmbed = Embed.success(
