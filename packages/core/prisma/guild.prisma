@@ -26,6 +26,7 @@ model Guild {
   
   // Bot installation status
   botInstalled            Boolean  @default(false) @map("bot_installed")
+  memberCount             Int      @default(0) @map("member_count")
   
   // New settings fields for domain logic
   colorScheme             Json?    @map("color_scheme") // Theme colors (keep as JSON for flexibility)
