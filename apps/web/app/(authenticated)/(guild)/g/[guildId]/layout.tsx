@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth-server";
 import { validateGuildAccess, getGuildWithAccess } from "@/lib/guild-context";
+import { Navbar } from "@/components/navbar";
 
 /**
  * Guild Layout
@@ -45,7 +46,7 @@ export default async function GuildLayout({
   // Each page/component will fetch permissions as needed for server-side checks
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* TODO: Add navigation header with guild switcher */}
+      <Navbar guildId={params.guildId} />
       <main>{children}</main>
     </div>
   );

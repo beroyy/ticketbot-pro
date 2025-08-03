@@ -2,7 +2,8 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Role, findById } from "@ticketsbot/core/domains";
+import { Role } from "@ticketsbot/core/domains";
+import { findById } from "@ticketsbot/core/domains/guild";
 import { parseDiscordId } from "@ticketsbot/core";
 
 /**

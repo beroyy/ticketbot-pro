@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getSession, type AuthSession } from "@ticketsbot/core/auth";
 import { User } from "@ticketsbot/core/domains";
+import { findById as findGuildById } from "@ticketsbot/core/domains/guild";
 
 /**
  * Server-side auth utilities for App Router
@@ -84,11 +85,23 @@ export async function getUserWithGuilds(userId: string) {
     
     // Parse guilds from JSON field
     const guildsData = discordUser.guilds as { data?: any[] } | null;
+    const discordGuilds = guildsData?.data || [];
+    
+    // Check bot installation status for each guild
+    const guildsWithBotStatus = await Promise.all(
+      discordGuilds.map(async (guild) => {
+        const dbGuild = await findGuildById(guild.id);
+        return {
+          ...guild,
+          botInstalled: dbGuild?.botInstalled || false,
+        };
+      })
+    );
     
     return {
       ...user,
       discordUser,
-      guilds: guildsData?.data || [],
+      guilds: guildsWithBotStatus,
     };
   } catch (error) {
     console.error("Failed to get user with guilds:", error);
