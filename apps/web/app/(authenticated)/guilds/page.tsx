@@ -143,7 +143,7 @@ function GuildCard({
           </form>
         ) : (
           <a
-            // href={`https://discord.com/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || "1397414095753318522"}&permissions=1099780064336&scope=bot+applications.commands&guild_id=${guild.id}`}
+            // href={`https://discord.com/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_NEXT_PUBLIC_DISCORD_CLIENT_ID || "1397414095753318522"}&permissions=1099780064336&scope=bot+applications.commands&guild_id=${guild.id}`}
             href="https://discord.com/oauth2/authorize?client_id=1397414095753318522"
             target="_blank"
             rel="noopener noreferrer"

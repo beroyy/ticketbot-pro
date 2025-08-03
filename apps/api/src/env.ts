@@ -7,8 +7,8 @@ const envSchema = z.object({
   BETTER_AUTH_SECRET: z.string().min(32),
 
   DISCORD_TOKEN: z.string().min(1),
-  DISCORD_CLIENT_ID: z.string().regex(/^\d+$/),
-  DISCORD_CLIENT_SECRET: z.string().min(1),
+  NEXT_PUBLIC_DISCORD_CLIENT_ID: z.string().regex(/^\d+$/),
+  NEXT_PUBLIC_DISCORD_CLIENT_SECRET: z.string().min(1),
 
   BASE_DOMAIN: z.string().optional(),
 
@@ -71,10 +71,13 @@ try {
   console.error("  NODE_ENV:", process.env.NODE_ENV || "❌ Missing");
   console.error("  DATABASE_URL:", process.env.DATABASE_URL ? "✓ Set" : "❌ Missing");
   console.error("  BETTER_AUTH_SECRET:", process.env.BETTER_AUTH_SECRET ? "✓ Set" : "❌ Missing");
-  console.error("  DISCORD_CLIENT_ID:", process.env.DISCORD_CLIENT_ID ? "✓ Set" : "❌ Missing");
   console.error(
-    "  DISCORD_CLIENT_SECRET:",
-    process.env.DISCORD_CLIENT_SECRET ? "✓ Set" : "❌ Missing"
+    "  NEXT_PUBLIC_DISCORD_CLIENT_ID:",
+    process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ? "✓ Set" : "❌ Missing"
+  );
+  console.error(
+    "  NEXT_PUBLIC_DISCORD_CLIENT_SECRET:",
+    process.env.NEXT_PUBLIC_DISCORD_CLIENT_SECRET ? "✓ Set" : "❌ Missing"
   );
   console.error("  DISCORD_TOKEN:", process.env.DISCORD_TOKEN ? "✓ Set" : "❌ Missing");
 

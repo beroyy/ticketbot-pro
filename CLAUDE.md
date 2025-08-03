@@ -208,8 +208,8 @@ BETTER_AUTH_SECRET=your-32-character-secret
 
 # Discord
 DISCORD_TOKEN=your-bot-token
-DISCORD_CLIENT_ID=123456789012345678
-DISCORD_CLIENT_SECRET=your-discord-secret
+NEXT_PUBLIC_DISCORD_CLIENT_ID=123456789012345678
+NEXT_PUBLIC_DISCORD_CLIENT_SECRET=your-discord-secret
 ```
 
 ### Production Configuration

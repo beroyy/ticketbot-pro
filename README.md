@@ -20,7 +20,7 @@ Get your TicketsBot AI system running in under 5 minutes!
 cp .env.example .env
 
 # Edit .env with your values
-# Required: DATABASE_URL, DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, DISCORD_TOKEN, BETTER_AUTH_SECRET
+# Required: DATABASE_URL, NEXT_PUBLIC_DISCORD_CLIENT_ID, NEXT_PUBLIC_DISCORD_CLIENT_SECRET, DISCORD_TOKEN, BETTER_AUTH_SECRET
 # For production, also set: BASE_DOMAIN (e.g., ticketsbot.co)
 ```
 
@@ -82,8 +82,8 @@ The `pnpm dev` command intelligently:
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
 2. Create a new application or use existing one
 3. Get your credentials:
-   - `DISCORD_CLIENT_ID` - From "Application ID"
-   - `DISCORD_CLIENT_SECRET` - From "OAuth2" section
+   - `NEXT_PUBLIC_DISCORD_CLIENT_ID` - From "Application ID"
+   - `NEXT_PUBLIC_DISCORD_CLIENT_SECRET` - From "OAuth2" section
    - `DISCORD_BOT_TOKEN` - From "Bot" section
 4. Set OAuth2 redirect URI: `http://localhost:3001/auth/callback/discord`
 
@@ -143,8 +143,8 @@ BETTER_AUTH_SECRET="32+ char secret"  # Session encryption key
 
 # Discord (Required)
 DISCORD_TOKEN="bot_token"
-DISCORD_CLIENT_ID="app_id"
-DISCORD_CLIENT_SECRET="app_secret"
+NEXT_PUBLIC_DISCORD_CLIENT_ID="app_id"
+NEXT_PUBLIC_DISCORD_CLIENT_SECRET="app_secret"
 
 # Production Domain (Required in production)
 BASE_DOMAIN="ticketsbot.co"        # Your production domain

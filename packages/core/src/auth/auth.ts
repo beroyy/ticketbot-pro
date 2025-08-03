@@ -120,9 +120,9 @@ const createAuthInstance = () => {
         clientId: discordClientId,
         clientSecret: discordClientSecret,
         scope: ["guilds"],
-        // redirectURI: isProduction()
-        //   ? `https://${process.env.BASE_DOMAIN || "ticketbot.pro"}/api/auth/callback/discord`
-        //   : "http://localhost:3000/api/auth/callback/discord",
+        redirectURI: isProduction()
+          ? `https://www.${process.env.BASE_DOMAIN || "localhost"}/api/auth/callback/discord`
+          : "http://localhost:3000/api/auth/callback/discord",
         mapProfileToUser: (profile: any) => {
           logger.debug("Discord OAuth profile received:", {
             id: profile.id,

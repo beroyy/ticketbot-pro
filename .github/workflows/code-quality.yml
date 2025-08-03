@@ -4,19 +4,19 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/**'
-      - 'packages/**'
-      - 'pnpm-lock.yaml'
-      - 'turbo.json'
-      - '.github/workflows/**'
+      - "apps/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
+      - "turbo.json"
+      - ".github/workflows/**"
   pull_request:
     branches: [main]
     paths:
-      - 'apps/**'
-      - 'packages/**'
-      - 'pnpm-lock.yaml'
-      - 'turbo.json'
-      - '.github/workflows/**'
+      - "apps/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
+      - "turbo.json"
+      - ".github/workflows/**"
 
 env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -58,8 +58,8 @@ jobs:
           DATABASE_URL=postgresql://test:test@localhost:5432/test
           BETTER_AUTH_SECRET=test-secret-at-least-32-characters-long-for-ci
           DISCORD_TOKEN=test-token
-          DISCORD_CLIENT_ID=123456789012345678
-          DISCORD_CLIENT_SECRET=test-secret-at-least-32-characters
+          NEXT_PUBLIC_DISCORD_CLIENT_ID=123456789012345678
+          NEXT_PUBLIC_DISCORD_CLIENT_SECRET=test-secret-at-least-32-characters
           EOF
 
       - name: Generate Prisma Client

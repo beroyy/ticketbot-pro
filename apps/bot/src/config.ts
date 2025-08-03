@@ -6,8 +6,8 @@ const envSchema = z.object({
   BETTER_AUTH_SECRET: z.string().min(32),
 
   DISCORD_TOKEN: z.string().min(1),
-  DISCORD_CLIENT_ID: z.string().regex(/^\d+$/),
-  DISCORD_CLIENT_SECRET: z.string().min(1),
+  NEXT_PUBLIC_DISCORD_CLIENT_ID: z.string().regex(/^\d+$/),
+  NEXT_PUBLIC_DISCORD_CLIENT_SECRET: z.string().min(1),
 
   BASE_DOMAIN: z.string().optional(),
 
@@ -52,7 +52,7 @@ try {
       environment: env.NODE_ENV,
       baseDomain: env.BASE_DOMAIN || "localhost (default)",
       port: env.BOT_PORT,
-      clientId: env.DISCORD_CLIENT_ID,
+      clientId: env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
       redis: env.REDIS_URL ? "configured" : "not configured",
       status: env.DISCORD_BOT_STATUS || "default",
     });
@@ -72,10 +72,13 @@ try {
   console.error("  DATABASE_URL:", process.env.DATABASE_URL ? "✓ Set" : "❌ Missing");
   console.error("  BETTER_AUTH_SECRET:", process.env.BETTER_AUTH_SECRET ? "✓ Set" : "❌ Missing");
   console.error("  DISCORD_TOKEN:", process.env.DISCORD_TOKEN ? "✓ Set" : "❌ Missing");
-  console.error("  DISCORD_CLIENT_ID:", process.env.DISCORD_CLIENT_ID ? "✓ Set" : "❌ Missing");
   console.error(
-    "  DISCORD_CLIENT_SECRET:",
-    process.env.DISCORD_CLIENT_SECRET ? "✓ Set" : "❌ Missing"
+    "  NEXT_PUBLIC_DISCORD_CLIENT_ID:",
+    process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ? "✓ Set" : "❌ Missing"
+  );
+  console.error(
+    "  NEXT_PUBLIC_DISCORD_CLIENT_SECRET:",
+    process.env.NEXT_PUBLIC_DISCORD_CLIENT_SECRET ? "✓ Set" : "❌ Missing"
   );
 
   const requiredInProd = process.env.NODE_ENV === "production";
@@ -99,7 +102,7 @@ export { env };
 
 export const botConfig = {
   discordToken: env.DISCORD_TOKEN,
-  clientId: env.DISCORD_CLIENT_ID,
+  clientId: env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
   databaseUrl: env.DATABASE_URL,
   environment: env.NODE_ENV,
   prefix: env.DISCORD_BOT_PREFIX || "!",

@@ -62,8 +62,8 @@ The main CI workflow runs on:
 DATABASE_URL                # PostgreSQL connection string
 BETTER_AUTH_SECRET         # Must be at least 32 characters
 DISCORD_TOKEN              # Discord bot token
-DISCORD_CLIENT_ID          # Discord app client ID
-DISCORD_CLIENT_SECRET      # Discord app client secret
+NEXT_PUBLIC_DISCORD_CLIENT_ID          # Discord app client ID
+NEXT_PUBLIC_DISCORD_CLIENT_SECRET      # Discord app client secret
 
 # Optional
 REDIS_URL                  # Redis connection (if using cloud Redis)

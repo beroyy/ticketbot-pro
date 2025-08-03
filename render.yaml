@@ -58,9 +58,9 @@ envVarGroups:
         value: ""
       - key: DISCORD_TOKEN
         value: ""
-      - key: DISCORD_CLIENT_ID
+      - key: NEXT_PUBLIC_DISCORD_CLIENT_ID
         value: ""
-      - key: DISCORD_CLIENT_SECRET
+      - key: NEXT_PUBLIC_DISCORD_CLIENT_SECRET
         value: ""
       - key: BASE_DOMAIN
         value: ""
