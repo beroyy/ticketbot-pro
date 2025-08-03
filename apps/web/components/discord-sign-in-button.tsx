@@ -21,7 +21,7 @@ export function DiscordSignInButton() {
       sessionStorage.setItem("oauth_state", state);
     }
 
-    window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
+    window.location.href = `https://discord.com/api/v9/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&integration_type=0`;
   };
 
   return (
