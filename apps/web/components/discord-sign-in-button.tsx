@@ -5,19 +5,18 @@ import { FaDiscord } from "react-icons/fa6";
 
 export function DiscordSignInButton() {
   const handleSignIn = async () => {
-    const redirectUri = `https://discord.com/oauth2/authorize?client_id=1397412199869186090&response_type=code&redirect_uri=https%3A%2F%2Fticketbot.pro%2Fapi%2Fauth%2Fcallback%2Fdiscord&scope=identify+email+guilds`;
+    const redirectUri =
+      process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI ||
+      "http://localhost:3000/api/auth/callback/discord";
     window.location.href = redirectUri;
+
+    const state =
+      Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("oauth_state", state);
+    }
   };
-  // : "http://localhost:3000/api/auth/callback/discord"
-  // );
-  // const scope = encodeURIComponent("identify email guilds");
-
-  // const state =
-  //   Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-  // if (typeof window !== "undefined") {
-  //   sessionStorage.setItem("oauth_state", state);
-  // }
 
   return (
     <button
