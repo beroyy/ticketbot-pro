@@ -3,11 +3,9 @@ import { logger } from "./utils/logger";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { serve } from "@hono/node-server";
-import { auth } from "@ticketsbot/core/auth";
 import { getApiUrl, getWebUrl, getDevPorts } from "@ticketsbot/core";
 import type { AppEnv } from "./factory";
 import { errorHandler } from "./utils/error-handler";
-import { authRoutes } from "./routes/auth";
 import { healthRoutes } from "./routes/health";
 import { schemaRoutes } from "./routes/schemas";
 import { userRoutes } from "./routes/user";
@@ -72,22 +70,8 @@ app.use(
   })
 );
 
-app.on(["POST", "GET"], "/auth/*", async (c) => {
-  const response = await auth.handler(c.req.raw);
-
-  const origin = c.req.header("origin");
-  if (origin && allowedOrigins.includes(origin)) {
-    response.headers.set("Access-Control-Allow-Origin", origin);
-    response.headers.set("Access-Control-Allow-Credentials", "true");
-    response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  }
-
-  return response;
-});
 
 const _routes = app
-  .route("/auth", authRoutes)
   .route("/health", healthRoutes)
   .route("/schemas", schemaRoutes)
   .route("/user", userRoutes)

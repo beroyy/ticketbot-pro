@@ -43,7 +43,7 @@ export function getApiUrl(): string {
 // }
 
 export function getDiscordRedirectUri(): string {
-  return `${getApiUrl()}/auth/callback/discord`;
+  return `${getWebUrl()}/api/auth/callback/discord`;
 }
 
 export function getAllUrls() {

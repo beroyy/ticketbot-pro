@@ -92,10 +92,10 @@ const createAuthInstance = () => {
   const cookieDomain = isProduction() ? `.${process.env.BASE_DOMAIN}` : "localhost";
 
   logger.debug("Creating Better Auth instance", {
-    baseURL: apiOrigin,
-    basePath: "/auth",
+    baseURL: webOrigin,
+    basePath: "/api/auth",
     discordConfigured: !!discordClientId && !!discordClientSecret,
-    redirectURI: `${apiOrigin}/auth/callback/discord`,
+    redirectURI: `${webOrigin}/api/auth/callback/discord`,
     discordClientId: discordClientId?.substring(0, 6) + "...",
     nodeEnv: process.env["NODE_ENV"],
     cookieDomain,
@@ -114,8 +114,6 @@ const createAuthInstance = () => {
       },
       expiresIn: 60 * 60 * 24 * 7,
     },
-    baseURL: apiOrigin,
-    basePath: "/auth",
     trustedOrigins: [webOrigin, apiOrigin],
     advanced: {
       cookiePrefix: "ticketsbot",

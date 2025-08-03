@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { createAuthenticatedClient } from "@/lib/api-client";
 import { TicketsDashboard } from "@/features/tickets/tickets-dashboard";
+import { getServerSession } from "@/lib/auth-server";
 
 type TicketsPageProps = {
   searchParams: Promise<{
@@ -25,8 +26,8 @@ export default async function TicketsPage({ searchParams }: TicketsPageProps) {
   const selectedTicketId = params.ticket || null;
 
   try {
-    const userResponse = await api.auth.me.$get();
-    if (!userResponse.ok) {
+    const session = await getServerSession();
+    if (!session) {
       return (
         <div className="flex h-screen items-center justify-center">
           <div className="text-center">
@@ -37,7 +38,15 @@ export default async function TicketsPage({ searchParams }: TicketsPageProps) {
       );
     }
 
-    const userData = await userResponse.json();
+    const userData = {
+      user: {
+        id: session.user.id,
+        email: session.user.email,
+        name: session.user.name,
+        image: session.user.image,
+        discordUserId: session.user.discordUserId,
+      }
+    };
 
     const guildId = params.guild || "123456789012345678";
 
