@@ -27,8 +27,8 @@ services:
       - REDIS_URL=redis://redis:6379
       - RUNNING_IN_DOCKER=true
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "3000:3000"
+      - "3001:3001"
       - "3002:3002"
     volumes:
       # Development volumes

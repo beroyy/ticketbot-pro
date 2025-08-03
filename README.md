@@ -61,8 +61,8 @@ pnpm dev --help
 
 ### What Gets Started
 
-- 🌐 **Web Dashboard** - http://localhost:9000
-- 🔌 **API Server** - http://localhost:9001
+- 🌐 **Web Dashboard** - http://localhost:3000
+- 🔌 **API Server** - http://localhost:3001
 - 🤖 **Discord Bot** - Connects using your token
 - 🐳 **Redis** - Automatically via Docker (port 6379)
 - 📦 **Database** - Initialized automatically if needed
@@ -85,7 +85,7 @@ The `pnpm dev` command intelligently:
    - `DISCORD_CLIENT_ID` - From "Application ID"
    - `DISCORD_CLIENT_SECRET` - From "OAuth2" section
    - `DISCORD_BOT_TOKEN` - From "Bot" section
-4. Set OAuth2 redirect URI: `http://localhost:9001/auth/callback/discord`
+4. Set OAuth2 redirect URI: `http://localhost:3001/auth/callback/discord`
 
 ### Database Setup
 
@@ -151,15 +151,15 @@ BASE_DOMAIN="ticketsbot.co"        # Your production domain
 
 # URLs (Automatically derived from BASE_DOMAIN)
 # In development:
-#   WEB_URL=http://localhost:9000
-#   API_URL=http://localhost:9001
+#   WEB_URL=http://localhost:3000
+#   API_URL=http://localhost:3001
 # In production:
 #   WEB_URL=https://app.ticketsbot.co
 #   API_URL=https://api.ticketsbot.co
 
 # Custom Ports (Optional - for development)
-WEB_PORT=9000                      # Web dashboard port
-API_PORT=9001                      # API server port
+WEB_PORT=3000                      # Web dashboard port
+API_PORT=3001                      # API server port
 
 # Redis (Optional)
 REDIS_URL="redis://localhost:6379"   # For caching/sessions

@@ -53,8 +53,8 @@ Create a `.env` file in the monorepo root:
 NODE_ENV=development
 DATABASE_URL=postgresql://user:password@localhost:5432/ticketsbot
 BETTER_AUTH_SECRET=your-32-char-secret
-API_URL=http://localhost:9001
-WEB_URL=http://localhost:9000
+API_URL=http://localhost:3001
+WEB_URL=http://localhost:3000
 
 # Discord OAuth
 DISCORD_CLIENT_ID=your-client-id
@@ -62,7 +62,7 @@ DISCORD_CLIENT_SECRET=your-client-secret
 
 # Optional
 REDIS_URL=redis://localhost:6379
-API_PORT=9001
+API_PORT=3001
 API_HOST=0.0.0.0
 DEV_PERMISSIONS_HEX=0xfffffff  # Dev mode all permissions
 ```
@@ -106,7 +106,7 @@ All routes except public endpoints require authentication:
 
 ```typescript
 // Auth cookie is automatically included
-fetch("http://localhost:9001/tickets", {
+fetch("http://localhost:3001/tickets", {
   credentials: "include",
 });
 ```
@@ -278,7 +278,7 @@ docker build -f apps/api/Dockerfile -t ticketsbot-api .
 # Run container
 docker run -d \
   --name ticketsbot-api \
-  -p 9001:9001 \
+  -p 3001:3001 \
   --env-file .env \
   ticketsbot-api
 ```

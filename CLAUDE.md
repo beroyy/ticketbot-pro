@@ -241,8 +241,8 @@ ALL URLs and ports are derived programmatically based on `NODE_ENV` and `BASE_DO
 
 **Development (NODE_ENV=development)**:
 
-- Web URL: `http://localhost:9000`
-- API URL: `http://localhost:9001`
+- Web URL: `http://localhost:3000`
+- API URL: `http://localhost:3001`
 - Bot Port: `3002`
 - Cookie Domain: `localhost`
 
@@ -255,7 +255,7 @@ ALL URLs and ports are derived programmatically based on `NODE_ENV` and `BASE_DO
 ### Important Notes
 
 - **NO URL/PORT ENV VARS**: Never set `WEB_URL`, `API_URL`, `WEB_PORT`, `API_PORT`, etc.
-- **Fixed Ports**: Development ports are hardcoded (9000, 9001, 3002) for consistency
+- **Fixed Ports**: Development ports are hardcoded (3000, 3001, 3002) for consistency
 - **Client-side Access**: For Next.js, use `NEXT_PUBLIC_BASE_DOMAIN` in client components
 - **URL Access**: Use `getWebUrl()`, `getApiUrl()` from `@ticketsbot/core` instead of env vars
 
@@ -453,15 +453,15 @@ If you encounter "State Mismatch. Verification not found" error when signing in:
 1. **Clear cookies and local storage**:
    - Open browser DevTools (F12)
    - Go to Application tab
-   - Clear all cookies for localhost:9000 and localhost:9001
+   - Clear all cookies for localhost:3000 and localhost:3001
    - Clear local storage
    - Try signing in again
 
 2. **Ensure environment variables are correct**:
 
    ```
-   WEB_URL=http://localhost:9000
-   API_URL=http://localhost:9001
+   WEB_URL=http://localhost:3000
+   API_URL=http://localhost:3001
    ```
 
 3. **Common causes**:

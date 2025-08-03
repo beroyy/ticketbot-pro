@@ -40,7 +40,7 @@ WORKDIR /app
 COPY --from=builder /app .
 
 # Expose ports (fixed ports from development config)
-EXPOSE 9001 3002
+EXPOSE 3001 3002
 
 # Start services
 CMD ["pnpm", "start:production"]

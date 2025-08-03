@@ -249,9 +249,9 @@ await withTransaction(async () => {
 - `NODE_ENV` - Environment (development/staging/production)
 - `DATABASE_URL` - PostgreSQL connection string
 - `BETTER_AUTH_SECRET` - Authentication secret key
-- `API_URL` - Public API URL (e.g., http://localhost:9001)
-- `WEB_URL` - Web app URL for CORS (e.g., http://localhost:9000)
-- `API_PORT` - Port to run API server (default: 9001)
+- `API_URL` - Public API URL (e.g., http://localhost:3001)
+- `WEB_URL` - Web app URL for CORS (e.g., http://localhost:3000)
+- `API_PORT` - Port to run API server (default: 3001)
 - `API_HOST` - Host to bind to (default: localhost)
 
 ### Discord OAuth
@@ -288,10 +288,10 @@ The API provides self-documenting schemas at `/schemas`:
 
 ```bash
 # List all schemas
-curl http://localhost:9001/schemas
+curl http://localhost:3001/schemas
 
 # Get specific schema
-curl http://localhost:9001/schemas/create-panel
+curl http://localhost:3001/schemas/create-panel
 ```
 
 Schemas include JSON Schema definitions and examples for all API endpoints.

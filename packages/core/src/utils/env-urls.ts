@@ -57,8 +57,8 @@ export function getAllUrls() {
 }
 
 const DEV_PORTS = {
-  web: 9000,
-  api: 9001,
+  web: 3000,
+  api: 3001,
   bot: 3002,
 } as const;
 
