@@ -37,4 +37,4 @@ COPY --from=builder /app .
 
 EXPOSE 3000 3001 3002
 
-CMD ["pnpm", "start:production"]
+CMD ["pnpm", "turbo", "start"]
