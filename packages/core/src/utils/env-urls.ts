@@ -1,8 +1,9 @@
 function getBaseDomain(): string {
   const baseDomain = process.env.BASE_DOMAIN;
   const isProduction = process.env.NODE_ENV === "production";
+  const isBuildTime = process.env.NEXT_PHASE === "phase-production-build";
 
-  if (isProduction && !baseDomain) {
+  if (isProduction && !baseDomain && !isBuildTime) {
     throw new Error("BASE_DOMAIN is required in production environment");
   }
 
@@ -30,17 +31,6 @@ export function getApiUrl(): string {
 
   return `http://localhost:${DEV_PORTS.api}`;
 }
-
-// export function getCookieDomain(): string {
-//   const baseDomain = getBaseDomain();
-//   const isProduction = process.env.NODE_ENV === "production";
-
-//   if (isProduction) {
-//     return `.${baseDomain}`;
-//   }
-
-//   return "localhost";
-// }
 
 export function getAllUrls() {
   return {
