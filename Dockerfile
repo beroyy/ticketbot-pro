@@ -3,31 +3,22 @@ FROM node:22-alpine AS base
 RUN apk add --no-cache bash git python3 make g++
 RUN npm install -g pnpm@10.13.1 turbo tsx
 
+# Dependencies stage
 FROM base AS deps
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY apps/api/package.json ./apps/api/
-COPY apps/bot/package.json ./apps/bot/
-COPY apps/web/package.json ./apps/web/
-COPY packages/core/package.json ./packages/core/
-COPY packages/scripts/package.json ./packages/scripts/
-COPY packages/eslint-config/package.json ./packages/eslint-config/
-COPY packages/tsconfig/package.json ./packages/tsconfig/
-COPY packages/vitest-config/package.json ./packages/vitest-config/
+# Copy everything, relying on .dockerignore to exclude unwanted files
+COPY . .
 
 ENV CI=true
 RUN pnpm install --frozen-lockfile
 
+# Builder stage
 FROM deps AS builder
 WORKDIR /app
 
-COPY apps/api ./apps/api
-COPY apps/bot ./apps/bot
-COPY apps/web ./apps/web
-COPY packages ./packages
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY .nvmrc ./
+# Copy source files (dockerignore excludes node_modules, etc.)
+COPY . .
 
 # Build Next.js app
 RUN pnpm --filter @ticketsbot/web build
@@ -35,6 +26,7 @@ RUN pnpm --filter @ticketsbot/web build
 # Note: API and Bot don't need build because Prisma needs runtime generation
 # The start:production script handles this
 
+# Runner stage
 FROM base AS runner
 WORKDIR /app
 
