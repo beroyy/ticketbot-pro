@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 
-import { config } from "dotenv";
+// dotenvx handles environment loading
 import { spawn, execSync } from "child_process";
 import fs from "fs";
 import path from "path";

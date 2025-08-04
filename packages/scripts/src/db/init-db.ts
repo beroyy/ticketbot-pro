@@ -7,7 +7,7 @@
  * Used by Docker environments and local development setup.
  */
 
-import { config } from "dotenv";
+// dotenvx handles environment loading
 import { PrismaClient } from "@prisma/client";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
@@ -19,8 +19,7 @@ const __dirname = dirname(__filename);
 const rootDir = resolve(__dirname, "../../../..");
 const coreDir = resolve(rootDir, "packages/core");
 
-// Load environment variables from root .env file
-config({ path: resolve(rootDir, ".env") });
+// Environment variables are loaded by dotenvx
 
 const prisma = new PrismaClient();
 
