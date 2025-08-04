@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "start": "next start",
-    "build": "next build --turbopack",
+    "build": "next build",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "lint": "eslint --config eslint.config.mjs ."
   },
