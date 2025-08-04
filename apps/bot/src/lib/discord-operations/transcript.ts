@@ -48,8 +48,13 @@ export const TranscriptOps = {
             ? parseDiscordId(message.reference.messageId)
             : null,
         });
-      } catch (error) {
-        console.error("Error storing message:", error);
+      } catch (error: any) {
+        // Handle unique constraint errors gracefully
+        if (error?.code === "P2002" && error?.meta?.target?.includes("message_id")) {
+          console.debug(`Message ${message.id} already stored in transcript`);
+        } else {
+          console.error("Error storing message:", error);
+        }
       }
     },
 
@@ -75,8 +80,13 @@ export const TranscriptOps = {
             ? parseDiscordId(message.reference.messageId)
             : null,
         });
-      } catch (error) {
-        console.error("Error storing bot message:", error);
+      } catch (error: any) {
+        // Handle unique constraint errors gracefully
+        if (error?.code === "P2002" && error?.meta?.target?.includes("message_id")) {
+          console.debug(`Message ${message.id} already stored in transcript`);
+        } else {
+          console.error("Error storing bot message:", error);
+        }
       }
     },
   },

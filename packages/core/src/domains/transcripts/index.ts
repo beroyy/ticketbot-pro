@@ -86,9 +86,12 @@ export namespace Transcripts {
     // Get or create transcript
     const transcript = await getTranscript(parsed.ticketId);
 
-    // Create message
-    return prisma.ticketMessage.create({
-      data: {
+    // Create or update message (upsert to handle duplicates)
+    return prisma.ticketMessage.upsert({
+      where: {
+        messageId: parsed.messageId,
+      },
+      create: {
         transcriptId: transcript.id,
         messageId: parsed.messageId,
         authorId: parsed.authorId,
@@ -97,6 +100,13 @@ export namespace Transcripts {
         attachments: parsed.attachments,
         messageType: parsed.messageType,
         referenceId: parsed.referenceId,
+      },
+      update: {
+        // Update only mutable fields on duplicate
+        content: parsed.content,
+        embeds: parsed.embeds,
+        attachments: parsed.attachments,
+        editedAt: new Date(),
       },
     });
   };
