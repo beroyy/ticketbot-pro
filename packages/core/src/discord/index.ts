@@ -59,6 +59,12 @@ export namespace Discord {
    * Get or initialize the Discord client
    */
   const getClient = async (): Promise<Client> => {
+    // Check if we're in Next.js build phase
+    const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
+    if (isBuildPhase) {
+      throw new Error("Discord client cannot be initialized during build phase");
+    }
+    
     // Return existing client if available
     if (client?.isReady()) {
       return client;
@@ -114,7 +120,14 @@ export namespace Discord {
         resolve();
       });
 
-      newClient.login(process.env.DISCORD_TOKEN).catch((error) => {
+      const token = process.env.DISCORD_TOKEN;
+      if (!token) {
+        clearTimeout(timeout);
+        reject(new Error("DISCORD_TOKEN is not set"));
+        return;
+      }
+      
+      newClient.login(token).catch((error) => {
         clearTimeout(timeout);
         reject(error);
       });

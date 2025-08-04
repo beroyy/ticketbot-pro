@@ -42,12 +42,13 @@ type SessionData = {
 const getOrigins = () => {
   const webOrigin = getWebUrl();
   const apiOrigin = getApiUrl();
+  const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
 
-  if (!getOrigins.logged) {
+  if (!getOrigins.logged && !isBuildPhase) {
     logger.info("Auth trusted origins:", {
       webOrigin,
       apiOrigin,
-      baseDomain: process.env.BASE_DOMAIN || "localhost",
+      baseDomain: process.env.BASE_DOMAIN || process.env.NEXT_PUBLIC_BASE_DOMAIN || "localhost",
     });
     getOrigins.logged = true;
   }
@@ -59,12 +60,15 @@ getOrigins.logged = false;
 // No longer using Redis for secondary storage - database only
 
 const createAuthInstance = () => {
+  // Check if we're in Next.js build phase
+  const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
+  
   const getEnvVar = (key: string, fallback?: string): string => {
     return process.env[key] || fallback || "";
   };
 
-  const authSecret = getEnvVar("BETTER_AUTH_SECRET");
-  if (!authSecret) {
+  const authSecret = getEnvVar("BETTER_AUTH_SECRET") || (isBuildPhase ? "build-time-placeholder" : "");
+  if (!authSecret && !isBuildPhase) {
     logger.error("BETTER_AUTH_SECRET is not set! Sessions will not work properly.");
   }
 
@@ -72,10 +76,12 @@ const createAuthInstance = () => {
   const discordClientSecret = getEnvVar("NEXT_PUBLIC_DISCORD_CLIENT_SECRET");
 
   if (!discordClientId || !discordClientSecret) {
-    logger.warn("Discord OAuth credentials not set. OAuth login will not work.", {
-      clientIdSet: !!discordClientId,
-      clientSecretSet: !!discordClientSecret,
-    });
+    if (!isBuildPhase) {
+      logger.warn("Discord OAuth credentials not set. OAuth login will not work.", {
+        clientIdSet: !!discordClientId,
+        clientSecretSet: !!discordClientSecret,
+      });
+    }
   }
 
   const { webOrigin, apiOrigin } = getOrigins();

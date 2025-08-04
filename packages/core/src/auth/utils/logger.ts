@@ -16,6 +16,10 @@ class AuthLogger {
   }
 
   private shouldLog(level: LogLevel): boolean {
+    // Don't log during Next.js build phase
+    if (process.env.NEXT_PHASE === "phase-production-build") {
+      return false;
+    }
     return logLevels[level] <= logLevels[this.level];
   }
 
