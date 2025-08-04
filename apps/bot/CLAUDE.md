@@ -277,7 +277,7 @@ pnpm typecheck
 ```env
 # Required
 DISCORD_TOKEN=your_bot_token
-DISCORD_CLIENT_ID=your_client_id
+NEXT_PUBLIC_DISCORD_CLIENT_ID=your_client_id
 
 # Optional
 BOT_PORT=3002              # Health check port

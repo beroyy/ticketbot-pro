@@ -53,7 +53,7 @@ Create a `.env` file in the monorepo root:
 # Required
 NODE_ENV=development
 DISCORD_TOKEN=your_bot_token
-DISCORD_CLIENT_ID=your_client_id
+NEXT_PUBLIC_DISCORD_CLIENT_ID=your_client_id
 DATABASE_URL=postgresql://user:password@localhost:5432/ticketsbot
 
 # Optional

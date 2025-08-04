@@ -57,8 +57,8 @@ API_URL=http://localhost:3001
 WEB_URL=http://localhost:3000
 
 # Discord OAuth
-DISCORD_CLIENT_ID=your-client-id
-DISCORD_CLIENT_SECRET=your-client-secret
+NEXT_PUBLIC_DISCORD_CLIENT_ID=your-client-id
+NEXT_PUBLIC_DISCORD_CLIENT_SECRET=your-client-secret
 
 # Optional
 REDIS_URL=redis://localhost:6379

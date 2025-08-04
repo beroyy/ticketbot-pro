@@ -256,8 +256,8 @@ await withTransaction(async () => {
 
 ### Discord OAuth
 
-- `DISCORD_CLIENT_ID` - Discord application client ID
-- `DISCORD_CLIENT_SECRET` - Discord application secret
+- `NEXT_PUBLIC_DISCORD_CLIENT_ID` - Discord application client ID
+- `NEXT_PUBLIC_DISCORD_CLIENT_SECRET` - Discord application secret
 
 ### Optional
 
