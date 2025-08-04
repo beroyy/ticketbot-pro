@@ -42,6 +42,8 @@ EXPOSE 3000 3001 3002
 
 # Set production environment
 ENV NODE_ENV=production
+ARG NEXT_PUBLIC_BASE_DOMAIN
+ENV BASE_DOMAIN=${NEXT_PUBLIC_BASE_DOMAIN}
 
 # Use a custom start script that doesn't trigger builds
 CMD ["pnpm", "run", "start:production"]

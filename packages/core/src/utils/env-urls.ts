@@ -1,12 +1,5 @@
 function getBaseDomain(): string {
-  const baseDomain = process.env.BASE_DOMAIN;
-  const isProduction = process.env.NODE_ENV === "production";
-  const isBuildTime = process.env.NEXT_PHASE === "phase-production-build";
-
-  if (isProduction && !baseDomain && !isBuildTime) {
-    throw new Error("BASE_DOMAIN is required in production environment");
-  }
-
+  const baseDomain = process.env.BASE_DOMAIN || process.env.NEXT_PUBLIC_BASE_DOMAIN;
   return baseDomain || "localhost";
 }
 
