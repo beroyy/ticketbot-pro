@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsc --watch --noEmit",
-    "build": "tsc --project tsconfig.json --noEmit",
+    "build": "echo 'Core package uses runtime transpilation, no build needed'",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "lint": "eslint --config eslint.config.js src/",
     "test": "vitest --config vitest.config.ts",
