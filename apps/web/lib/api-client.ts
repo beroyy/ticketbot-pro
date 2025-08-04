@@ -7,15 +7,8 @@ const getApiUrl = () => {
     return "http://localhost:3001";
   }
 
-  // Client-side: use relative URL for API calls (same host)
-  const baseDomain = process.env.NEXT_PUBLIC_BASE_DOMAIN;
-  const isProduction = process.env.NODE_ENV === "production";
-
-  if (isProduction && baseDomain) {
-    return `https://api.${baseDomain}`;
-  }
-
-  return "http://localhost:3001";
+  // Client-side: use proxied path through Next.js
+  return "/api/v1";
 };
 
 export const createApiClient = () => {
