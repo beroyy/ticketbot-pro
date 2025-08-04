@@ -2,8 +2,14 @@
 
 import { useGuildListRefresh } from "@/hooks/use-sse-events";
 
-export function GuildListClient() {
-  // refresh on guild-joined/left events
-  useGuildListRefresh();
+type GuildListClientProps = {
+  enableSSE?: boolean;
+};
+
+export function GuildListClient({ enableSSE = true }: GuildListClientProps) {
+  // refresh on guild-joined/left events only if SSE is enabled
+  if (enableSSE) {
+    useGuildListRefresh();
+  }
   return null;
 }

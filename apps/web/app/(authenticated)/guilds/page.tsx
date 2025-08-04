@@ -30,9 +30,12 @@ export default async function GuildsPage({
 
   const selectedGuild = await getSelectedGuild();
 
+  // Check if we will redirect
+  let willRedirect = false;
   if (selectedGuild && !params.error) {
     const guild = guildsWithStatus.find((g: any) => g.id === selectedGuild && g.botInstalled);
     if (guild) {
+      willRedirect = true;
       redirect(`/g/${selectedGuild}/dashboard`);
     }
   }
@@ -85,7 +88,7 @@ export default async function GuildsPage({
         </div>
       </div>
 
-      <GuildListClient />
+      <GuildListClient enableSSE={!willRedirect} />
     </>
   );
 }
