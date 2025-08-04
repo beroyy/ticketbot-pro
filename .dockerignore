@@ -1,6 +1,3 @@
-# Web app - not needed for api/bot deploys
-apps/web/
-
 # Dependencies
 **/node_modules
 **/.pnpm-store
