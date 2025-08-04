@@ -251,9 +251,11 @@ Do you want to proceed?`
     flags: EPHEMERAL_FLAG,
   });
 
+  let response: Awaited<ReturnType<NonNullable<typeof interaction.channel>["awaitMessageComponent"]>> | undefined;
+  
   // Wait for confirmation
   try {
-    const response = await interaction.channel?.awaitMessageComponent({
+    response = await interaction.channel?.awaitMessageComponent({
       filter: (i) => i.user.id === interaction.user.id,
       time: 30000,
     });
@@ -270,7 +272,7 @@ Do you want to proceed?`
 
     // User confirmed, proceed with setup
     await response.deferUpdate();
-    await InteractionEdit.edit(interaction, {
+    await response.editReply({
       embeds: [Embed.info("Setting up...", "Please wait while I configure your server...")],
       components: [],
     });
@@ -415,7 +417,7 @@ Do you want to proceed?`
         iconURL: guild.iconURL() || undefined,
       });
 
-    await InteractionEdit.edit(interaction, { embeds: [successEmbed] });
+    await response.editReply({ embeds: [successEmbed] });
     return ok(undefined);
   } catch (error) {
     if (error instanceof Error && error.message.includes("time")) {
@@ -424,10 +426,26 @@ Do you want to proceed?`
     }
 
     container.logger.error("Error in auto setup:", error);
-    await InteractionEdit.error(
-      interaction,
-      "An error occurred during auto setup. Please try again."
-    );
+    // Try to edit the button response if it exists, otherwise try the original interaction
+    try {
+      if (response && !response.replied && !response.deferred) {
+        await response.reply({
+          embeds: [Embed.error("❌ Error", "An error occurred during auto setup. Please try again.")],
+          flags: EPHEMERAL_FLAG,
+        });
+      } else if (response) {
+        await response.editReply({
+          embeds: [Embed.error("❌ Error", "An error occurred during auto setup. Please try again.")],
+        });
+      } else {
+        await InteractionEdit.error(
+          interaction,
+          "An error occurred during auto setup. Please try again."
+        );
+      }
+    } catch (errorResponseError) {
+      container.logger.error("Failed to send error response:", errorResponseError);
+    }
     return err("Auto setup failed");
   }
 };
