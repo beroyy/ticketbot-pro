@@ -1,9 +1,7 @@
 # Base stage with common dependencies
 FROM node:22-alpine AS base
-RUN apk add --no-cache bash git python3 make g++ curl
+RUN apk add --no-cache bash git python3 make g++
 RUN npm install -g pnpm@10.13.1 turbo tsx
-# Install dotenvx
-RUN curl -sfS https://dotenvx.sh/install.sh | sh
 
 # Dependencies stage
 FROM base AS deps
@@ -44,8 +42,6 @@ EXPOSE 3000 3001 3002
 
 # Set production environment
 ENV NODE_ENV=production
-ARG NEXT_PUBLIC_BASE_DOMAIN
-ENV BASE_DOMAIN=${NEXT_PUBLIC_BASE_DOMAIN}
 
-# Use dotenvx to load environment variables at runtime
-CMD ["dotenvx", "run", "--", "pnpm", "start:production"]
+# In production, use environment variables from the platform (Render)
+CMD ["pnpm", "start:production"]

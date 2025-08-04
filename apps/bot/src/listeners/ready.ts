@@ -15,16 +15,18 @@ export const ReadyListener = ListenerFactory.once("ready", async (client: Client
   logger.info(`👂 ${container.stores.get("listeners").size} listeners loaded`);
 
   // Initialize analytics (PostHog)
-  try {
-    // In development or when no API key is provided, PostHog will be disabled
-    initializePostHog({
-      apiKey: process.env.POSTHOG_API_KEY || "",
-      // disabled: isDevelopment() || !process.env.POSTHOG_API_KEY,
-      host: "https://us.i.posthog.com",
-    });
-    logger.info("✅ Analytics initialized");
-  } catch (error) {
-    logger.error("❌ Failed to initialize analytics:", error);
+  if (process.env.POSTHOG_API_KEY) {
+    try {
+      initializePostHog({
+        apiKey: process.env.POSTHOG_API_KEY,
+        host: "https://us.i.posthog.com",
+      });
+      logger.info("✅ Analytics initialized");
+    } catch (error) {
+      logger.error("❌ Failed to initialize analytics:", error);
+    }
+  } else {
+    logger.info("📊 Analytics disabled (no POSTHOG_API_KEY)");
   }
 
   // Initialize scheduled task system
