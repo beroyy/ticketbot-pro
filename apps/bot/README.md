@@ -58,7 +58,6 @@ DATABASE_URL=postgresql://user:password@localhost:5432/ticketsbot
 
 # Optional
 REDIS_URL=redis://localhost:6379
-BOT_PORT=3002
 LOG_LEVEL=info
 ```
 

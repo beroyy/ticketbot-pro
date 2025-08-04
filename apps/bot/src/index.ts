@@ -1,7 +1,6 @@
 import "@sapphire/plugin-logger/register";
 import "@sapphire/plugin-subcommands/register";
-import { createServer } from "http";
-import { botConfig, env } from "@bot/config";
+import { botConfig } from "@bot/config";
 import { BaseBotClient, configurePermissionProvider } from "@bot/lib/sapphire-extensions";
 import { GatewayIntentBits } from "discord.js";
 import { container } from "@sapphire/framework";
@@ -65,31 +64,6 @@ process.on("SIGTERM", async () => {
 
 process.on("unhandledRejection", (error) => {
   client.logger.error("Unhandled promise rejection:", error);
-});
-
-// health check for Render
-const healthServer = createServer((req, res) => {
-  if (req.url === "/health") {
-    const isReady = client.isReady();
-    res.writeHead(isReady ? 200 : 503, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        status: isReady ? "healthy" : "unhealthy",
-        uptime: process.uptime(),
-        timestamp: new Date().toISOString(),
-        environment: env.NODE_ENV,
-        version: "0.0.1",
-      })
-    );
-  } else {
-    res.writeHead(404);
-    res.end("Not Found");
-  }
-});
-
-const PORT = env.BOT_PORT;
-healthServer.listen(PORT, () => {
-  console.log(`🏥 Health check server listening on port ${PORT.toString()}`);
 });
 
 void client.login(botConfig.discordToken);

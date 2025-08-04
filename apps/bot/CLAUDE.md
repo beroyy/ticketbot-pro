@@ -241,11 +241,6 @@ const channel = result.data;
 ### Health Check & Graceful Shutdown
 
 ```typescript
-// Bot includes health check server
-const server = app.listen(BOT_PORT, () => {
-  console.log(`Health check on port ${BOT_PORT}`);
-});
-
 // Graceful shutdown
 process.on("SIGTERM", async () => {
   await ScheduledTask.gracefulShutdown();
@@ -280,7 +275,6 @@ DISCORD_TOKEN=your_bot_token
 NEXT_PUBLIC_DISCORD_CLIENT_ID=your_client_id
 
 # Optional
-BOT_PORT=3002              # Health check port
 NODE_ENV=development       # Environment
 ```
 

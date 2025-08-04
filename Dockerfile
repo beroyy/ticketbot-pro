@@ -3,9 +3,6 @@ FROM node:22-alpine AS base
 RUN apk add --no-cache bash git python3 make g++
 RUN npm install -g pnpm@10.13.1 turbo tsx
 
-# Set Node.js memory limit to prevent OOM errors
-ENV NODE_OPTIONS="--max-old-space-size=4096"
-
 # Dependencies stage
 FROM base AS deps
 WORKDIR /app
@@ -42,6 +39,9 @@ WORKDIR /app
 COPY --from=builder /app .
 
 EXPOSE 3000 3001 3002
+
+# Set production environment
+ENV NODE_ENV=production
 
 # Use a custom start script that doesn't trigger builds
 CMD ["pnpm", "run", "start:production"]
