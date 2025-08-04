@@ -20,6 +20,9 @@ WORKDIR /app
 # Copy source files (dockerignore excludes node_modules, etc.)
 COPY . .
 
+# Generate Prisma Client before building (required for type imports)
+RUN pnpm db:generate
+
 # Build Next.js app
 RUN pnpm --filter @ticketsbot/web build
 
