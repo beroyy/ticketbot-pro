@@ -62,17 +62,6 @@ export function createTicketThreadName(ticketId: number, username: string): stri
   return `Ticket #${ticketId.toString()} - ${username}`;
 }
 
-export function validateEnvironmentVariables(config: Partial<BotConfig>): BotConfig {
-  const required = ["discordToken", "clientId", "databaseUrl"];
-  const missing = required.filter((key) => !config[key as keyof BotConfig]);
-
-  if (missing.length > 0) {
-    throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
-  }
-
-  return config as BotConfig;
-}
-
 export { PermissionUtils } from "./permissions";
 
 export { getWebUrl, getApiUrl, getAllUrls, getDevPorts } from "./env-urls";

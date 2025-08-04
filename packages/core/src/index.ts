@@ -212,7 +212,6 @@ export {
   formatDiscordId,
   createTicketChannelName,
   createTicketThreadName,
-  validateEnvironmentVariables,
   getWebUrl,
   getApiUrl,
   getAllUrls,
