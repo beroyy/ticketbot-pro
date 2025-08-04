@@ -2,6 +2,12 @@ import { hc } from "hono/client";
 import type { AppType } from "@ticketsbot/api";
 
 const getApiUrl = () => {
+  // When running on the server side in the same container, use internal URL
+  if (typeof window === "undefined") {
+    return "http://localhost:3001";
+  }
+
+  // Client-side: use relative URL for API calls (same host)
   const baseDomain = process.env.NEXT_PUBLIC_BASE_DOMAIN;
   const isProduction = process.env.NODE_ENV === "production";
 
@@ -19,7 +25,6 @@ export const createApiClient = () => {
       fetch(input, {
         ...init,
         credentials: "include",
-        mode: "cors" as RequestMode,
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -42,7 +47,6 @@ export const createAuthenticatedClient = (cookieHeader: string) => {
     return fetch(input, {
       ...init,
       credentials: "include",
-      mode: "cors" as RequestMode,
       headers,
     });
   };

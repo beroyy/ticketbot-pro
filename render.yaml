@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ticketsbot-api-bot
+    name: ticketsbot
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerContext: .
@@ -9,13 +9,14 @@ services:
     region: oregon
     plan: starter
     autoDeploy: true
-    healthCheckPath: /health
+    healthCheckPath: /api/health
     numInstances: 1
     dockerCommand: pnpm start:production
     buildFilter:
       paths:
         - apps/api/**
         - apps/bot/**
+        - apps/web/**
         - packages/core/**
         - packages/scripts/**
         - package.json
@@ -26,7 +27,6 @@ services:
         - render.yaml
         - .nvmrc
       ignoredPaths:
-        - apps/web/**
         - "**/*.md"
         - docs/**
         - "**/*.test.ts"

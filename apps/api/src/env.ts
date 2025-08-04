@@ -68,24 +68,21 @@ try {
   const requiredInProd = process.env.NODE_ENV === "production";
 
   console.error("\n📋 Required environment variables for API:");
-  console.error("  NODE_ENV:", process.env.NODE_ENV || "❌ Missing");
-  console.error("  DATABASE_URL:", process.env.DATABASE_URL ? "✓ Set" : "❌ Missing");
-  console.error("  BETTER_AUTH_SECRET:", process.env.BETTER_AUTH_SECRET ? "✓ Set" : "❌ Missing");
+  console.error("NODE_ENV:", process.env.NODE_ENV || "❌ Missing");
+  console.error("DATABASE_URL:", process.env.DATABASE_URL ? "✓ Set" : "❌ Missing");
+  console.error("BETTER_AUTH_SECRET:", process.env.BETTER_AUTH_SECRET ? "✓ Set" : "❌ Missing");
   console.error(
-    "  NEXT_PUBLIC_DISCORD_CLIENT_ID:",
+    "NEXT_PUBLIC_DISCORD_CLIENT_ID:",
     process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ? "✓ Set" : "❌ Missing"
   );
   console.error(
-    "  NEXT_PUBLIC_DISCORD_CLIENT_SECRET:",
+    "NEXT_PUBLIC_DISCORD_CLIENT_SECRET:",
     process.env.NEXT_PUBLIC_DISCORD_CLIENT_SECRET ? "✓ Set" : "❌ Missing"
   );
-  console.error("  DISCORD_TOKEN:", process.env.DISCORD_TOKEN ? "✓ Set" : "❌ Missing");
+  console.error("DISCORD_TOKEN:", process.env.DISCORD_TOKEN ? "✓ Set" : "❌ Missing");
 
   if (requiredInProd) {
-    console.error(
-      "  BASE_DOMAIN:",
-      process.env.BASE_DOMAIN || "❌ Missing (required in production)"
-    );
+    console.error("BASE_DOMAIN:", process.env.BASE_DOMAIN || "❌ Missing (required in production)");
   }
 
   console.error("\n💡 Tips:");

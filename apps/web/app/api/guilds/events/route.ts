@@ -101,8 +101,6 @@ export async function GET(request: Request) {
       "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
       "X-Accel-Buffering": "no",
-      "Access-Control-Allow-Origin": getWebUrl(),
-      "Access-Control-Allow-Credentials": "true",
     },
   });
 }

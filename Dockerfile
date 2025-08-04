@@ -9,6 +9,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/api/package.json ./apps/api/
 COPY apps/bot/package.json ./apps/bot/
+COPY apps/web/package.json ./apps/web/
 COPY packages/core/package.json ./packages/core/
 COPY packages/scripts/package.json ./packages/scripts/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
@@ -23,11 +24,15 @@ WORKDIR /app
 
 COPY apps/api ./apps/api
 COPY apps/bot ./apps/bot
+COPY apps/web ./apps/web
 COPY packages ./packages
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY .nvmrc ./
 
-# Note: We don't build here because Prisma needs runtime generation
+# Build Next.js app
+RUN pnpm --filter @ticketsbot/web build
+
+# Note: API and Bot don't need build because Prisma needs runtime generation
 # The start:production script handles this
 
 FROM base AS runner
@@ -35,6 +40,6 @@ WORKDIR /app
 
 COPY --from=builder /app .
 
-EXPOSE 3001 3002
+EXPOSE 3000 3001 3002
 
 CMD ["pnpm", "start:production"]
