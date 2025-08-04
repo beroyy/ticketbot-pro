@@ -32,8 +32,12 @@ export const GuildCreateListener = ListenerFactory.on("guildCreate", async (guil
     logger.info(`👤 Ensured owner ${owner.user.tag} exists in database`);
 
     // 4. Create default team roles
-    await Role.ensureDefaultRoles(parseDiscordId(guild.id));
-    logger.info(`🎭 Created default team roles for guild ${guild.name}`);
+    try {
+      await Role.ensureDefaultRoles(parseDiscordId(guild.id));
+      logger.info(`🎭 Created default team roles for guild ${guild.name}`);
+    } catch (error) {
+      logger.warn(`Default roles may already exist for guild ${guild.name}:`, error);
+    }
 
     // 5. Assign owner to admin role
     const adminRole = await Role.getRoleByName(parseDiscordId(guild.id), "admin");

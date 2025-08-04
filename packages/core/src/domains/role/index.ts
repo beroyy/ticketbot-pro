@@ -206,18 +206,22 @@ export namespace Role {
    * Ensure default roles exist for a guild
    */
   export const ensureDefaultRoles = async (guildId: string): Promise<void> => {
-    // Check if admin role exists
-    const adminRole = await prisma.guildRole.findFirst({
-      where: {
-        guildId: guildId,
-        name: "admin",
-        isDefault: true,
-      },
-    });
-
-    if (!adminRole) {
-      await prisma.guildRole.create({
-        data: {
+    // Use transaction to ensure atomicity and handle race conditions
+    await prisma.$transaction(async (tx) => {
+      // Use upsert to handle race conditions and ensure idempotency
+      await tx.guildRole.upsert({
+        where: {
+          guildId_name: {
+            guildId: guildId,
+            name: "admin",
+          },
+        },
+        update: {
+          // Update these fields if the role already exists
+          isDefault: true,
+          permissions: DefaultRolePermissions.admin,
+        },
+        create: {
           guildId: guildId,
           name: "admin",
           color: "#5865F2",
@@ -226,20 +230,20 @@ export namespace Role {
           permissions: DefaultRolePermissions.admin,
         },
       });
-    }
 
-    // Check if support role exists
-    const supportRole = await prisma.guildRole.findFirst({
-      where: {
-        guildId: guildId,
-        name: "support",
-        isDefault: true,
-      },
-    });
-
-    if (!supportRole) {
-      await prisma.guildRole.create({
-        data: {
+      await tx.guildRole.upsert({
+        where: {
+          guildId_name: {
+            guildId: guildId,
+            name: "support",
+          },
+        },
+        update: {
+          // Update these fields if the role already exists
+          isDefault: true,
+          permissions: DefaultRolePermissions.support,
+        },
+        create: {
           guildId: guildId,
           name: "support",
           color: "#57F287",
@@ -248,20 +252,20 @@ export namespace Role {
           permissions: DefaultRolePermissions.support,
         },
       });
-    }
 
-    // Check if viewer role exists
-    const viewerRole = await prisma.guildRole.findFirst({
-      where: {
-        guildId: guildId,
-        name: "viewer",
-        isDefault: true,
-      },
-    });
-
-    if (!viewerRole) {
-      await prisma.guildRole.create({
-        data: {
+      await tx.guildRole.upsert({
+        where: {
+          guildId_name: {
+            guildId: guildId,
+            name: "viewer",
+          },
+        },
+        update: {
+          // Update these fields if the role already exists
+          isDefault: true,
+          permissions: DefaultRolePermissions.viewer,
+        },
+        create: {
           guildId: guildId,
           name: "viewer",
           color: "#99AAB5",
@@ -270,7 +274,7 @@ export namespace Role {
           permissions: DefaultRolePermissions.viewer,
         },
       });
-    }
+    });
   };
 
   /**

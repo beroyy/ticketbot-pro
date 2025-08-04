@@ -313,7 +313,12 @@ Do you want to proceed?`
     });
 
     // Ensure default team roles exist
-    await Role.ensureDefaultRoles(guildId);
+    try {
+      await Role.ensureDefaultRoles(guildId);
+    } catch (error) {
+      // Log the error but continue - roles might already exist from guild-create
+      container.logger.warn(`Default roles may already exist for guild ${guildId}:`, error);
+    }
 
     // Assign admin role to invoker
     const adminTeamRole = await Role.getRoleByName(guildId, "admin");
