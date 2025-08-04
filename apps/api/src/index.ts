@@ -70,7 +70,6 @@ app.use(
   })
 );
 
-
 const _routes = app
   .route("/health", healthRoutes)
   .route("/schemas", schemaRoutes)
@@ -85,7 +84,7 @@ const _routes = app
 
 export type AppType = typeof _routes;
 
-const port = process.env.PORT ? parseInt(process.env.PORT) : apiPort;
+const port = apiPort;
 const host = env.API_HOST;
 
 Redis.initialize()
