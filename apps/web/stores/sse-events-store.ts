@@ -195,17 +195,13 @@ async function handleEventSideEffects(event: SSEEventType) {
   switch (event.type) {
     case "guild.joined": {
       const data = event.data as import("@/lib/webhooks").GuildJoinedData;
-      // Show a toast first
+      // Show a toast notification
       toast.success(`Bot installed in ${data.guildName}!`, {
         description: "The server list has been updated.",
         duration: 5000,
         id: `guild-joined-${data.guildId}`, // Prevent duplicate toasts
       });
-
-      // Refresh server list if on guilds page
-      if (window.location.pathname === "/guilds") {
-        window.location.reload();
-      }
+      // Page refresh is handled by useGuildListRefresh hook
       break;
     }
 
@@ -214,11 +210,7 @@ async function handleEventSideEffects(event: SSEEventType) {
         description: "The server is no longer available.",
         duration: 4000,
       });
-
-      // Refresh server list if on guilds page
-      if (window.location.pathname === "/guilds") {
-        window.location.reload();
-      }
+      // Page refresh is handled by useGuildListRefresh hook
       break;
     }
 
