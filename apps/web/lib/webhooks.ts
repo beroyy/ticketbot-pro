@@ -5,51 +5,51 @@ import type { NextRequest } from "next/server";
  * Webhook validation and utilities for bot integration
  */
 
-export interface WebhookHeaders {
+export type WebhookHeaders = {
   signature: string;
   timestamp: string;
-}
+};
 
-export interface WebhookPayload<T = unknown> {
+export type WebhookPayload<T = unknown> = {
   event: string;
   timestamp: string;
   data: T;
-}
+};
 
 // Guild Events
-export interface GuildJoinedData {
+export type GuildJoinedData = {
   guildId: string;
   guildName: string;
   ownerId: string;
   memberCount: number;
-}
+};
 
-export interface GuildLeftData {
+export type GuildLeftData = {
   guildId: string;
-}
+};
 
-export interface SetupCompleteData {
+export type SetupCompleteData = {
   guildId: string;
   supportCategoryId?: string;
   transcriptsChannelId?: string;
   logChannelId?: string;
   defaultRoleId?: string;
-}
+};
 
 // Ticket Events
-export interface TicketMessageData {
+export type TicketMessageData = {
   guildId: string;
   ticketId: number;
   ticketNumber: number;
   messageId: string;
   authorId: string;
   authorUsername: string;
-  messageType: 'customer' | 'staff' | 'bot';
+  messageType: "customer" | "staff" | "bot";
   hasAttachments: boolean;
   messageLength: number;
-}
+};
 
-export interface TicketStatusData {
+export type TicketStatusData = {
   guildId: string;
   ticketId: number;
   ticketNumber: number;
@@ -57,9 +57,9 @@ export interface TicketStatusData {
   newStatus: string;
   actorId: string;
   reason?: string;
-}
+};
 
-export interface TicketCreatedData {
+export type TicketCreatedData = {
   guildId: string;
   ticketId: number;
   ticketNumber: number;
@@ -68,9 +68,9 @@ export interface TicketCreatedData {
   openerUsername: string;
   panelId?: string;
   categoryId?: string;
-}
+};
 
-export interface TicketUpdatedData {
+export type TicketUpdatedData = {
   guildId: string;
   ticketId: number;
   ticketNumber: number;
@@ -80,84 +80,84 @@ export interface TicketUpdatedData {
     tags?: { added: string[]; removed: string[] };
   };
   actorId: string;
-}
+};
 
-export interface TicketDeletedData {
+export type TicketDeletedData = {
   guildId: string;
   ticketId: number;
   ticketNumber: number;
   deletedBy: string;
   reason?: string;
-}
+};
 
 // Team Events
-export interface TeamRoleData {
+export type TeamRoleData = {
   guildId: string;
   roleId: string;
   roleName: string;
-  action: 'created' | 'updated' | 'deleted';
+  action: "created" | "updated" | "deleted";
   changes?: Record<string, any>;
-}
+};
 
-export interface TeamMemberData {
+export type TeamMemberData = {
   guildId: string;
   userId: string;
   username: string;
   roleId: string;
   roleName: string;
-  action: 'assigned' | 'unassigned';
-}
+  action: "assigned" | "unassigned";
+};
 
 // Member Events
-export interface MemberLeftData {
+export type MemberLeftData = {
   guildId: string;
   userId: string;
   username: string;
   hadOpenTickets: boolean;
   wasTeamMember: boolean;
-}
+};
 
 // Unified Bot Event Type
-export type BotEventType = 
-  | 'guild.joined'
-  | 'guild.left'
-  | 'guild.setup_complete'
-  | 'ticket.created'
-  | 'ticket.updated'
-  | 'ticket.deleted'
-  | 'ticket.message_sent'
-  | 'ticket.status_changed'
-  | 'ticket.claimed'
-  | 'ticket.closed'
-  | 'team.role_created'
-  | 'team.role_updated'
-  | 'team.role_deleted'
-  | 'team.member_assigned'
-  | 'team.member_unassigned'
-  | 'member.left';
+export type BotEventType =
+  | "guild.joined"
+  | "guild.left"
+  | "guild.setup_complete"
+  | "ticket.created"
+  | "ticket.updated"
+  | "ticket.deleted"
+  | "ticket.message_sent"
+  | "ticket.status_changed"
+  | "ticket.claimed"
+  | "ticket.closed"
+  | "team.role_created"
+  | "team.role_updated"
+  | "team.role_deleted"
+  | "team.member_assigned"
+  | "team.member_unassigned"
+  | "member.left";
 
-export type BotEvent = 
-  | { type: 'guild.joined'; data: GuildJoinedData }
-  | { type: 'guild.left'; data: GuildLeftData }
-  | { type: 'guild.setup_complete'; data: SetupCompleteData }
-  | { type: 'ticket.created'; data: TicketCreatedData }
-  | { type: 'ticket.updated'; data: TicketUpdatedData }
-  | { type: 'ticket.deleted'; data: TicketDeletedData }
-  | { type: 'ticket.message_sent'; data: TicketMessageData }
-  | { type: 'ticket.status_changed'; data: TicketStatusData }
-  | { type: 'ticket.claimed'; data: TicketStatusData }
-  | { type: 'ticket.closed'; data: TicketStatusData }
-  | { type: 'team.role_created'; data: TeamRoleData }
-  | { type: 'team.role_updated'; data: TeamRoleData }
-  | { type: 'team.role_deleted'; data: TeamRoleData }
-  | { type: 'team.member_assigned'; data: TeamMemberData }
-  | { type: 'team.member_unassigned'; data: TeamMemberData }
-  | { type: 'member.left'; data: MemberLeftData };
+export type BotEvent =
+  | { type: "guild.joined"; data: GuildJoinedData }
+  | { type: "guild.left"; data: GuildLeftData }
+  | { type: "guild.setup_complete"; data: SetupCompleteData }
+  | { type: "ticket.created"; data: TicketCreatedData }
+  | { type: "ticket.updated"; data: TicketUpdatedData }
+  | { type: "ticket.deleted"; data: TicketDeletedData }
+  | { type: "ticket.message_sent"; data: TicketMessageData }
+  | { type: "ticket.status_changed"; data: TicketStatusData }
+  | { type: "ticket.claimed"; data: TicketStatusData }
+  | { type: "ticket.closed"; data: TicketStatusData }
+  | { type: "team.role_created"; data: TeamRoleData }
+  | { type: "team.role_updated"; data: TeamRoleData }
+  | { type: "team.role_deleted"; data: TeamRoleData }
+  | { type: "team.member_assigned"; data: TeamMemberData }
+  | { type: "team.member_unassigned"; data: TeamMemberData }
+  | { type: "member.left"; data: MemberLeftData };
 
-export interface UnifiedWebhookPayload {
+export type UnifiedWebhookPayload = {
   event: BotEvent;
   timestamp: string;
-}
+};
 
 /**
  * Validates webhook signature to ensure request is from our bot
@@ -172,16 +172,14 @@ export function validateWebhookSignature(
   const timestampMs = parseInt(timestamp);
   const now = Date.now();
   const fiveMinutes = 5 * 60 * 1000;
-  
+
   if (isNaN(timestampMs) || now - timestampMs > fiveMinutes) {
     return false;
   }
 
   // Create expected signature
   const signaturePayload = `${timestamp}.${payload}`;
-  const expectedSignature = createHmac("sha256", secret)
-    .update(signaturePayload)
-    .digest("hex");
+  const expectedSignature = createHmac("sha256", secret).update(signaturePayload).digest("hex");
 
   // Constant-time comparison to prevent timing attacks
   return signature === `sha256=${expectedSignature}`;
@@ -222,12 +220,7 @@ export async function validateWebhookRequest<T = unknown>(
     }
 
     // Validate signature
-    const isValid = validateWebhookSignature(
-      body,
-      headers.signature,
-      headers.timestamp,
-      secret
-    );
+    const isValid = validateWebhookSignature(body, headers.signature, headers.timestamp, secret);
 
     if (!isValid) {
       return { valid: false, error: "Invalid webhook signature" };
@@ -274,12 +267,7 @@ export async function validateUnifiedWebhookRequest(
     }
 
     // Validate signature
-    const isValid = validateWebhookSignature(
-      body,
-      headers.signature,
-      headers.timestamp,
-      secret
-    );
+    const isValid = validateWebhookSignature(body, headers.signature, headers.timestamp, secret);
 
     if (!isValid) {
       return { valid: false, error: "Invalid webhook signature" };

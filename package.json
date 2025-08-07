@@ -28,7 +28,7 @@
     "db:validate": "dotenvx run -- pnpm --filter @ticketsbot/core db:validate",
     "deploy:validate:render": "tsx packages/scripts/src/deploy/validate-prod-env.ts render",
     "deploy:validate:vercel": "tsx packages/scripts/src/deploy/validate-prod-env.ts vercel",
-    "dev": "dotenvx run -- turbo run dev",
+    "dev": "dotenvx run -- turbo run dev db:studio --parallel",
     "docker": "docker compose up --build",
     "redis": "docker compose up -d redis",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
